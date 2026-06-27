@@ -7573,7 +7573,7 @@ Capital por riesgo inesperado (z95 * suma sigma) = 18.176
 <li>Disponer los datos como matriz <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>X</mi></mrow></math> de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>34</mn></mrow></math> años <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>×</mo></mrow></math> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>k</mi></mrow></math> series.</li>
 <li><strong>Estandarizar</strong> cada serie (restar media, dividir por desviación típica). Es imprescindible porque las series tienen escalas muy dispares (p. ej. la hiperinflación brasileña de los 90 alcanza miles de %): así la PCA se basa en la <strong>matriz de correlación</strong> y no la dominan las series de mayor varianza.</li>
 <li>Calcular la PCA vía <strong>SVD</strong> de la matriz estandarizada <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>X</mi><mi>s</mi></msub><mo>=</mo><mi>U</mi><mspace width="0.167em"></mspace><mi>S</mi><mspace width="0.167em"></mspace><msup><mi>V</mi><mo>⊤</mo></msup></mrow></math>. La primera componente principal (los <em>scores</em>) es <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mtext>PC1</mtext><mo>=</mo><msub><mi>U</mi><mrow><mo>·</mo><mo>,</mo><mn>1</mn></mrow></msub><mspace width="0.167em"></mspace><msub><mi>S</mi><mrow><mn>1</mn></mrow></msub></mrow></math>, una serie temporal de 34 valores.</li>
-<li><strong>Fijar el signo</strong> (la PCA lo deja indeterminado): orientamos PC1 para que correlacione <strong>positivamente con el crecimiento del PIB</strong>. Así el índice se interpreta como un "pulso" de fortaleza económica, comparable entre países.</li>
+<li><strong>Fijar el signo</strong> (la PCA lo deja indeterminado): por reproducibilidad orientamos cada PC1 para que su correlación con el crecimiento del PIB sea <strong>positiva</strong>. Es solo una <strong>convención</strong> que hace los índices comparables entre países; <strong>no</strong> garantiza que PC1 mida "fortaleza económica" — de hecho su significado varía según el país, como veremos.</li>
 </ol>
 <p>El cociente <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msubsup><mi>S</mi><mn>1</mn><mn>2</mn></msubsup><mo>/</mo><mo>∑</mo><msup><mi>S</mi><mn>2</mn></msup></mrow></math> es la <strong>proporción de varianza explicada</strong> (EVR) por PC1.</p>
 </div>
@@ -7641,7 +7641,12 @@ Capital por riesgo inesperado (z95 * suma sigma) = 18.176
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Las <strong>cargas</strong> indican cómo entra cada serie en el índice (con el signo ya orientado a PIB<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>↑</mo></mrow></math>). La EVR mide cuánta información resume PC1: alta en Brazil/Chile (~60%) y más baja en Italia (~38%), lo que advierte que para Italia un solo factor resume peor su dinámica macro (sus 3 series están menos correlacionadas). Visualizamos los cinco índices a lo largo del tiempo.</p>
+<p>Las <strong>cargas</strong> (y la correlación del índice con cada serie cruda) revelan que <strong>PC1 no significa lo mismo en todos los países</strong>:</p>
+<ul>
+<li>En <strong>Brazil y Chile</strong> PC1 captura un eje <em>inflación–tipos–actividad</em> (inflación y tipos altos, paro bajo). En <strong>Brazil</strong> está además <strong>dominado por la hiperinflación de 1991–1994</strong> —esos años marcan el pico del índice (corr ≈ 0.8 con el periodo 91–94)—, por lo que funciona casi como un indicador de régimen.</li>
+<li>En <strong>France y Germany</strong> PC1 está gobernado por el contraste <strong>inflación↓ / paro↑</strong> (la carga del PIB es minoritaria): un índice alto refleja <strong>más paro</strong>, no necesariamente "fortaleza económica".</li>
+</ul>
+<p>Por tanto PC1 es el <strong>primer factor común</strong> de cada bloque macro, no un índice homogéneo de fortaleza. La <strong>EVR</strong> confirma que resume bien a Brazil/Chile (~60%) pero peor a <strong>Italia (~38%)</strong>, cuyas 3 series están poco correlacionadas. Conviene tenerlo presente al leer la matriz de correlaciones. Visualizamos los cinco índices a lo largo del tiempo.</p>
 </div>
 </div>
 </div>
@@ -7782,7 +7787,67 @@ Autovalores de R: [0.169 0.377 0.729 1.66  2.065]  -&gt; todos &gt; 0 (definida 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Se reconocen bloques con sentido económico: <strong>Brazil–Chile</strong> alta (latinoamérica), <strong>France–Germany</strong> positiva (núcleo del euro), y algunas correlaciones negativas (p. ej. Italia frente a Francia). Estos signos dependen de la convención de signo de PC1 (orientado a PIB<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>↑</mo></mrow></math>); el procedimiento garantiza coherencia entre países.</p>
+<p>La matriz <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math> muestra bloques como <strong>Brazil–Chile</strong> y <strong>France–Germany</strong> (positivos) y algún signo negativo (Italia–Francia). Antes de usarla conviene tener presentes tres advertencias de rigor:</p>
+<ol>
+<li>Los <strong>signos</strong> de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math> dependen de la convención de signo de PC1. Al fijarla igual para todos (orientación a PIB<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>↑</mo></mrow></math>) son <strong>coherentes entre países</strong>, pero no "absolutos".</li>
+<li>Con solo <strong>34 observaciones</strong>, el error típico de cada correlación es <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>≈</mo><mn>1</mn><mo>/</mo><msqrt><mrow><mi>n</mi><mo>−</mo><mn>3</mn></mrow></msqrt><mo>≈</mo><mn>0.18</mn></mrow></math>: las correlaciones pequeñas <strong>no son distinguibles de 0</strong>.</li>
+<li>Como PC1 mezcla ejes distintos según el país (ver arriba), <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math> es un <strong>constructo estadístico</strong>, no una "correlación del ciclo" limpia.</li>
+</ol>
+<p>A continuación cuantificamos (i) qué correlaciones son significativas y (ii) cuánto afectan estas advertencias al capital final.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4fac429f">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+
+<span class="c1"># (i) Significancia de las correlaciones (n=34 observaciones)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">years</span><span class="p">)</span>
+<span class="n">se_r</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span>          <span class="c1"># error típico aproximado de una correlación</span>
+<span class="n">umbral</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">se_r</span>                  <span class="c1"># ~2 errores típicos</span>
+<span class="n">signif</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">COUNTRIES</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">COUNTRIES</span><span class="p">[</span><span class="n">j</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span>
+          <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">umbral</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"(i) Significancia (n=</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">): SE(r) ~ </span><span class="si">{</span><span class="n">se_r</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  -&gt;  |r| significativo si &gt; </span><span class="si">{</span><span class="n">umbral</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    Correlaciones significativas: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">signif</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    (las demás no son distinguibles de 0)"</span><span class="p">)</span>
+
+<span class="c1"># (ii) Sensibilidad del capital diversificado a la convención de signo de PC1.</span>
+<span class="c1">#     Cambiar el signo de un índice equivale a R -&gt; D R D con D=diag(±1).</span>
+<span class="n">caps_conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mu</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">z95</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sig</span> <span class="o">@</span> <span class="p">(</span><span class="n">R</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span> <span class="o">@</span> <span class="n">sig</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">product</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">5</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">(ii) Capital diversificado (analítico) sobre las 2^5=32 convenciones de signo:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"     rango = [</span><span class="si">{</span><span class="n">caps_conv</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">caps_conv</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">]   "</span>
+      <span class="sa">f</span><span class="s2">"(nuestra convención PIB+ = </span><span class="si">{</span><span class="n">mu</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">+</span><span class="n">z95</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sig</span><span class="nd">@R@sig</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"     ¿todas por debajo del stand-alone (</span><span class="si">{</span><span class="n">suma_sa</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">)?  </span><span class="si">{</span><span class="nb">bool</span><span class="p">(</span><span class="n">caps_conv</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">suma_sa</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"     -&gt; La DIVERSIFICACIÓN es robusta a la convención; el valor exacto, no tanto."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>(i) Significancia (n=34): SE(r) ~ 0.18  -&gt;  |r| significativo si &gt; 0.36
+    Correlaciones significativas: Bra-Chi=+0.67, Chi-Ita=+0.56, Fra-Ger=+0.54
+    (las demás no son distinguibles de 0)
+
+(ii) Capital diversificado (analítico) sobre las 2^5=32 convenciones de signo:
+     rango = [79.6, 86.0]   (nuestra convención PIB+ = 85.1)
+     ¿todas por debajo del stand-alone (92.2)?  True
+     -&gt; La DIVERSIFICACIÓN es robusta a la convención; el valor exacto, no tanto.
+</pre>
+</div>
 </div>
 </div>
 </div>
@@ -7810,7 +7875,7 @@ Autovalores de R: [0.169 0.377 0.729 1.66  2.065]  -&gt; todos &gt; 0 (definida 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">Lchol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
@@ -7858,7 +7923,7 @@ Autovalores de R: [0.169 0.377 0.729 1.66  2.065]  -&gt; todos &gt; 0 (definida 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
@@ -7928,24 +7993,27 @@ Autovalores de R: [0.169 0.377 0.729 1.66  2.065]  -&gt; todos &gt; 0 (definida 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">simular_t_copula</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">semilla</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">simular_t_copula</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">semilla</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">return_L</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">semilla</span><span class="p">)</span>
     <span class="n">Z</span> <span class="o">=</span> <span class="p">(</span><span class="n">Lchol</span> <span class="o">@</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="n">N_SIM</span><span class="p">)))</span><span class="o">.</span><span class="n">T</span>
     <span class="n">W</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">N_SIM</span><span class="p">)</span> <span class="o">/</span> <span class="n">nu</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">W</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">nu</span><span class="p">),</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-12</span><span class="p">)</span>   <span class="c1"># uniformes (clip defensivo)</span>
     <span class="n">L</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">U</span><span class="p">)</span> <span class="o">*</span> <span class="n">sig</span> <span class="o">+</span> <span class="n">mu</span>                     <span class="c1"># marginales normales</span>
-    <span class="k">return</span> <span class="n">L</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">L</span> <span class="k">if</span> <span class="n">return_L</span> <span class="k">else</span> <span class="n">L</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">NU</span> <span class="o">=</span> <span class="mi">4</span>                                              <span class="c1"># grados de libertad de referencia</span>
 <span class="n">tot_t</span> <span class="o">=</span> <span class="n">simular_t_copula</span><span class="p">(</span><span class="n">NU</span><span class="p">)</span>
 <span class="n">cap_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">tot_t</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span>
+
+<span class="c1"># Verificación: con matriz de forma R, la cópula t debe reproducir R en las marginales</span>
+<span class="n">R_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">simular_t_copula</span><span class="p">(</span><span class="n">NU</span><span class="p">,</span> <span class="n">return_L</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">rowvar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cópula t de Student (nu=</span><span class="si">{</span><span class="n">NU</span><span class="si">}</span><span class="s2">):"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Capital diversificado 95% = </span><span class="si">{</span><span class="n">cap_t</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  (gaussiana 95% = </span><span class="si">{</span><span class="n">cap_gauss</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Capital diversificado 95% = </span><span class="si">{</span><span class="n">cap_t</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">   (gaussiana 95% = </span><span class="si">{</span><span class="n">cap_gauss</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Verificación: max|Corr realizada - R| = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">R_real</span><span class="o">-</span><span class="n">R</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">  (la t respeta R)"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7959,8 +8027,8 @@ Autovalores de R: [0.169 0.377 0.729 1.66  2.065]  -&gt; todos &gt; 0 (definida 
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Cópula t de Student (nu=4):
-  Capital diversificado 95% = 84.982
-  (gaussiana 95% = 85.101)
+  Capital diversificado 95% = 84.982   (gaussiana 95% = 85.101)
+  Verificación: max|Corr realizada - R| = 0.009  (la t respeta R)
 </pre>
 </div>
 </div>
@@ -7982,7 +8050,7 @@ Autovalores de R: [0.169 0.377 0.729 1.66  2.065]  -&gt; todos &gt; 0 (definida 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">niveles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">95</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mf">99.9</span><span class="p">]</span>
@@ -8031,7 +8099,7 @@ t, nu=3                84.91    90.96      99.38
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">4.8</span><span class="p">))</span>
@@ -8087,7 +8155,7 @@ t, nu=3                84.91    90.96      99.38
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">EL</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>                                  <span class="c1"># pérdida esperada (no diversifica)</span>
@@ -8137,7 +8205,7 @@ Diversificación sobre el riesgo inesperado (gaussiana): 38.9%
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
@@ -8185,13 +8253,14 @@ Diversificación sobre el riesgo inesperado (gaussiana): 38.9%
 </blockquote>
 <p><strong>Pipeline.</strong> <code>series_macro.xlsx</code> → PCA por país (índice sintético) → matriz de correlaciones <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>5</mn><mo>×</mo><mn>5</mn></mrow></math> → simulación de pérdidas (cópula gaussiana y t) → capital diversificado al 95%.</p>
 <p><strong>A. Stand-alone.</strong> Sumando los percentiles individuales, el capital sin diversificación es <strong>≈ 92.2</strong>. De ese total, la <strong>pérdida esperada</strong> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>Σ</mi><mi>μ</mi><mo>=</mo><mn>74</mn></mrow></math> no diversifica; solo el riesgo inesperado (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>z</mi><mrow><mn>0.95</mn></mrow></msub><mi>Σ</mi><mi>σ</mi><mo>≈</mo><mn>18.2</mn></mrow></math>) es diversificable.</p>
-<p><strong>B–C. Estructura de dependencia.</strong> El índice sintético (PC1) resume cada bloque macro nacional (EVR ~38%–60%) y su correlación produce una matriz <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math> definida positiva con bloques económicamente razonables (Brazil–Chile, France–Germany).</p>
+<p><strong>B–C. Estructura de dependencia.</strong> El índice sintético (PC1) es el <strong>primer factor común</strong> de cada bloque macro (EVR ~38%–60%), pero <strong>su significado varía por país</strong> (eje inflación–tipos en Brazil/Chile, dominado por la hiperinflación; contraste inflación↓/paro↑ en France/Germany). Por ello <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math> es un <strong>constructo estadístico</strong>, no una "correlación del ciclo" limpia: con solo 34 datos las correlaciones pequeñas no son significativas (solo Brazil–Chile, Chile–Italia y France–Germany superan el ruido) y sus <strong>signos dependen de la convención de signo de PC1</strong>. Aun así, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math> es definida positiva y muestra bloques razonables.</p>
 <p><strong>D. Cópula gaussiana.</strong> El capital diversificado al 95% es <strong>≈ 85.1</strong>, validado analíticamente (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>∑</mo><mi>μ</mi><mo>+</mo><msub><mi>z</mi><mrow><mn>0.95</mn></mrow></msub><msqrt><mrow><msup><mi>σ</mi><mo>⊤</mo></msup><mi>R</mi><mi>σ</mi></mrow></msqrt></mrow></math>). La diversificación <strong>ahorra ≈ 7.7%</strong> del capital total (y <strong>≈ 39%</strong> del riesgo inesperado), porque <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>σ</mi><mrow><mtext>tot</mtext></mrow></msub><mo>=</mo><msqrt><mrow><msup><mi>σ</mi><mo>⊤</mo></msup><mi>R</mi><mi>σ</mi></mrow></msqrt><mo>≈</mo><mn>6.75</mn><mo>&lt;</mo><mi>Σ</mi><mi>σ</mi><mo>=</mo><mn>11.05</mn></mrow></math>: al no estar perfectamente correlacionadas, las pérdidas no alcanzan su peor escenario simultáneamente.</p>
-<p><strong>E. Cópula t de Student.</strong> Con las <strong>mismas</strong> marginales y <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math>, a percentil 95% el capital es <strong>casi idéntico</strong> al gaussiano (la diferencia es mínima porque 95% no es un cuantil extremo). Sin embargo, la cópula t tiene <strong>dependencia de colas</strong>: al avanzar hacia la cola (99%, 99.9%) exige <strong>bastante más</strong> capital, tanto más cuanto menor es <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>ν</mi></mrow></math>. Es decir, <strong>el tipo de cópula es casi irrelevante a 95% pero decisivo para riesgos extremos</strong>.</p>
+<p><strong>E. Cópula t de Student.</strong> Con las <strong>mismas</strong> marginales y la <strong>misma</strong> <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math> (que la cópula t respeta: correlación realizada ≈ <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math>), a percentil 95% el capital es <strong>casi idéntico</strong> al gaussiano (95% no es un cuantil extremo). Sin embargo, la cópula t tiene <strong>dependencia de colas</strong>: al avanzar hacia la cola (99%, 99.9%) exige <strong>bastante más</strong> capital, tanto más cuanto menor es <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>ν</mi></mrow></math>. Es decir, <strong>el tipo de cópula es casi irrelevante a 95% pero decisivo para riesgos extremos</strong>.</p>
 <p><strong>F. Lecturas finales.</strong></p>
 <ul>
 <li>La <strong>diversificación</strong> reduce el capital de forma tangible, pero solo actúa sobre el riesgo inesperado; la pérdida esperada permanece.</li>
-<li>La <strong>elección de cópula</strong> no cambia la media ni (apenas) los cuantiles moderados, pero gobierna el comportamiento en la <strong>cola</strong>: subestimarla (usar gaussiana cuando hay dependencia de colas) infravalora el capital para sucesos severos. Por prudencia regulatoria, a niveles de confianza altos (99.9%) conviene una cópula con colas (t) o un análisis de sensibilidad en <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>ν</mi></mrow></math>.</li>
+<li>La conclusión de diversificación es <strong>robusta</strong>: recalculando el capital para las <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mn>2</mn><mn>5</mn></msup><mo>=</mo><mn>32</mn></mrow></math> convenciones de signo de los índices, <strong>siempre</strong> resulta inferior al stand-alone (92.2). Lo que sí depende de la convención (y del ruido de estimación de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>R</mi></mrow></math> con <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>n</mi><mo>=</mo><mn>34</mn></mrow></math>) es el <strong>valor exacto</strong>, que se mueve en una banda de pocos puntos — conviene reportarlo con esa cautela.</li>
+<li>La <strong>elección de cópula</strong> no cambia la media ni (apenas) los cuantiles moderados, pero gobierna el comportamiento en la <strong>cola</strong>: subestimarla (usar gaussiana cuando hay dependencia de colas) infravalora el capital para sucesos severos. Por prudencia, a niveles de confianza altos (99.9%) conviene una cópula con colas (t) o un análisis de sensibilidad en <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>ν</mi></mrow></math>.</li>
 <li>Para distribuciones elípticas (gaussiana y t) el VaR es <strong>subaditivo</strong>, por lo que la diversificación nunca penaliza; en modelos con colas muy asimétricas esto podría no cumplirse.</li>
 </ul>
 </div>
