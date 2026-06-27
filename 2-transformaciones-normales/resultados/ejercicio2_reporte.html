@@ -7666,13 +7666,7 @@ media muestral = 0.0001, desv. típica = 1.0005
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Verificación de la densidad analítica (α&gt;0):
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>  α = 0.5:  ∫₀^∞ fY dy = 1.000000   |   KS vs simulación: D = 0.00092
+  α = 0.5:  ∫₀^∞ fY dy = 1.000000   |   KS vs simulación: D = 0.00092
 </pre>
 </div>
 </div>
@@ -7776,7 +7770,7 @@ media muestral = 0.0001, desv. típica = 1.0005
 <span class="n">F_Z</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">Phi</span><span class="p">(</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">Phi</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>            <span class="c1"># CDF teórica</span>
 <span class="n">ks_Z</span> <span class="o">=</span> <span class="n">kstest</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">F_Z</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Comprobación de f_Z:"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  soporte: min(Z) = </span><span class="si">{</span><span class="n">Z</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  (Z &gt; 0) ✓"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  soporte: min(Z) = </span><span class="si">{</span><span class="n">Z</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> &gt; 0,  max(Z) = </span><span class="si">{</span><span class="n">Z</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  (Z toma valores positivos) ✓"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ∫₀^∞ f_Z(z) dz = </span><span class="si">{</span><span class="n">int_fZ</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">  (debe ser 1) ✓"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  test KS simulación vs F_Z teórica → D = </span><span class="si">{</span><span class="n">ks_Z</span><span class="o">.</span><span class="n">statistic</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> (ínfimo) ✓"</span><span class="p">)</span>
 </pre></div>
@@ -7792,7 +7786,7 @@ media muestral = 0.0001, desv. típica = 1.0005
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Comprobación de f_Z:
-  soporte: min(Z) = 0.0000  (Z &gt; 0) ✓
+  soporte: min(Z) = 1.12e-06 &gt; 0,  max(Z) = 4.93  (Z toma valores positivos) ✓
   ∫₀^∞ f_Z(z) dz = 1.000000  (debe ser 1) ✓
   test KS simulación vs F_Z teórica → D = 0.00081 (ínfimo) ✓
 </pre>
@@ -7850,6 +7844,78 @@ media muestral = 0.0001, desv. típica = 1.0005
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p>La curva analítica se superpone con precisión al histograma. Se aprecia el <strong>doble origen</strong> de la densidad: el pico cerca de <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi><mo>≈</mo><mn>0.6</mn></mrow></math>–<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>1</mn></mrow></math> lo aporta la rama <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msqrt><mrow><mi>x</mi></mrow></msqrt></mrow></math> (término <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>2</mn><mi>z</mi><mspace width="0.167em"></mspace><msup><mi>e</mi><mrow><mo>−</mo><msup><mi>z</mi><mn>4</mn></msup><mo>/</mo><mn>2</mn></mrow></msup></mrow></math>) y la cola lo aporta la rama <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>−</mo><mi>x</mi></mrow></math> (término <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>e</mi><mrow><mo>−</mo><msup><mi>z</mi><mn>2</mn></msup><mo>/</mo><mn>2</mn></mrow></msup></mrow></math>, media normal).</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6e90ef29">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Tabla-resumen de todas las verificaciones (generada desde código)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"RESUMEN DE VERIFICACIONES — Ejercicio 2"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">2.1 · Continuidad de Y = g(X):"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">ALPHAS</span><span class="p">:</span>
+    <span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">g</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">estado</span> <span class="o">=</span> <span class="s2">"MIXTA — átomo en 0"</span> <span class="k">if</span> <span class="n">p0</span> <span class="o">&gt;</span> <span class="mf">1e-3</span> <span class="k">else</span> <span class="s2">"continua"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"     α = </span><span class="si">{</span><span class="n">a</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">:  P(Y=0) = </span><span class="si">{</span><span class="n">p0</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">   →  </span><span class="si">{</span><span class="n">estado</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"     α = -1 reproduce N(0,1):  KS D = </span><span class="si">{</span><span class="n">kstest</span><span class="p">(</span><span class="n">g</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span><span class="w"> </span><span class="s1">'norm'</span><span class="p">)</span><span class="o">.</span><span class="n">statistic</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">2.2 · Densidad analítica de Y (α&gt;0):  fY(y)=φ(y)+(1/α)φ(y/α)"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]:</span>
+    <span class="n">val</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">fY_pos</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">:</span> <span class="n">Phi</span><span class="p">(</span><span class="n">y</span><span class="o">/</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">Phi</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"     α = </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">:  ∫fY = </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">   KS vs simulación D = </span><span class="si">{</span><span class="n">kstest</span><span class="p">(</span><span class="n">g</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="n">F</span><span class="p">)</span><span class="o">.</span><span class="n">statistic</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">2.3 · Densidad de Z = h(X):  fZ(z)=(1/√2π)(2z e^(-z⁴/2)+e^(-z²/2))"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"     ∫fZ = </span><span class="si">{</span><span class="n">int_fZ</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">   KS vs simulación D = </span><span class="si">{</span><span class="n">ks_Z</span><span class="o">.</span><span class="n">statistic</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">   min(Z) = </span><span class="si">{</span><span class="n">Z</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2"> &gt; 0"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Todas las deducciones analíticas quedan confirmadas por simulación."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>============================================================
+RESUMEN DE VERIFICACIONES — Ejercicio 2
+============================================================
+
+2.1 · Continuidad de Y = g(X):
+     α = -1.0:  P(Y=0) = 0.0000   →  continua
+     α = -0.5:  P(Y=0) = 0.0000   →  continua
+     α =  0.0:  P(Y=0) = 0.4997   →  MIXTA — átomo en 0
+     α =  0.5:  P(Y=0) = 0.0000   →  continua
+     α =  1.0:  P(Y=0) = 0.0000   →  continua
+     α = -1 reproduce N(0,1):  KS D = 0.00066
+
+2.2 · Densidad analítica de Y (α&gt;0):  fY(y)=φ(y)+(1/α)φ(y/α)
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>     α = 0.5:  ∫fY = 1.000000   KS vs simulación D = 0.00092
+     α = 1.0:  ∫fY = 1.000000   KS vs simulación D = 0.00059
+
+2.3 · Densidad de Z = h(X):  fZ(z)=(1/√2π)(2z e^(-z⁴/2)+e^(-z²/2))
+     ∫fZ = 1.000000   KS vs simulación D = 0.00081   min(Z) = 1.12e-06 &gt; 0
+
+Todas las deducciones analíticas quedan confirmadas por simulación.
+</pre>
+</div>
 </div>
 </div>
 </div>
