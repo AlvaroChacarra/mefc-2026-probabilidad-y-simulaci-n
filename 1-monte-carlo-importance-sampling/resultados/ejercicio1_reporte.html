@@ -8028,6 +8028,11 @@ El IC del IS es ≈ 9.9× más estrecho que el del MC directo.
 <span class="n">var_mc_emp</span> <span class="o">=</span> <span class="n">I_mc_rep</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
 <span class="n">var_is_emp</span> <span class="o">=</span> <span class="n">I_is_rep</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
 
+<span class="c1"># Insesgadez: la media de las B réplicas debe coincidir con I=2/π en AMBOS métodos</span>
+<span class="c1"># (así la comparación de varianzas es limpia: ambos centrados en el valor real)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"INSESGADEZ (media de las </span><span class="si">{</span><span class="n">B</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> réplicas, debe ≈ I = </span><span class="si">{</span><span class="n">I_EXACTO</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">):"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  media(Î_MC) = </span><span class="si">{</span><span class="n">I_mc_rep</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">     media(Î_IS) = </span><span class="si">{</span><span class="n">I_is_rep</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"VARIANZAS EMPÍRICAS del estimador  (n=</span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">, B=</span><span class="si">{</span><span class="n">B</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> réplicas):"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Var(Î_MC) empírica = </span><span class="si">{</span><span class="n">var_mc_emp</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">     teórica σ²_MC/n = </span><span class="si">{</span><span class="n">var_mc_teorica</span><span class="o">/</span><span class="n">N</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Var(Î_IS) empírica = </span><span class="si">{</span><span class="n">var_is_emp</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">     teórica σ²_IS/n = </span><span class="si">{</span><span class="n">var_is_teorica</span><span class="o">/</span><span class="n">N</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -8044,7 +8049,10 @@ El IC del IS es ≈ 9.9× más estrecho que el del MC directo.
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>VARIANZAS EMPÍRICAS del estimador  (n=200, B=10,000 réplicas):
+<pre>INSESGADEZ (media de las 10,000 réplicas, debe ≈ I = 0.636620):
+  media(Î_MC) = 0.636571     media(Î_IS) = 0.636615
+
+VARIANZAS EMPÍRICAS del estimador  (n=200, B=10,000 réplicas):
   Var(Î_MC) empírica = 4.761e-04     teórica σ²_MC/n = 4.736e-04
   Var(Î_IS) empírica = 4.938e-06     teórica σ²_IS/n = 4.954e-06
   Ratio empírico Var_MC/Var_IS = 96.40×
