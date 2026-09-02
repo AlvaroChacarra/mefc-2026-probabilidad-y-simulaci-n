@@ -26,12 +26,11 @@ para colocarlos localmente. La revisión independiente queda documentada en
 
 ### Ejercicio 1
 
-- Caso base para el bucket agregado Caa-C: mezcla neutral w=50%.
-- Cohorte: default exacto en 1Y de **3,4997%**; PD acumulada a 25Y de
-  **56,4780%**, equivalente a **2.825,03** compañías esperadas.
-- La composición Caa/Ca-C no está identificada en el Excel. Los extremos producen
-  una PD de cohorte a 25Y entre **54,1342% y 57,4853%**.
-- La simulación de P^25 queda dentro de **2,16 errores estándar** en las
+- El enunciado trabaja con ocho estados. Conforme a la aclaración docente, se
+  elimina la fila `Ca-C` del Excel y la fila `Caa` representa el estado `Caa-C`.
+- Cohorte: default exacto en 1Y de **2,2614%**; PD acumulada a 25Y de
+  **54,1342%**, equivalente a **2.707,79** compañías esperadas.
+- La simulación de P^25 queda dentro de **2,41 errores estándar** en las
   56 celdas contrastadas.
 
 ### Ejercicio 2

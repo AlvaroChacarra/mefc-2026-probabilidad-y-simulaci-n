@@ -2,13 +2,20 @@
 
 ## Veredicto
 
-**APROBADO CON SALVEDAD DE DATO.**
+**APROBADO.**
+
+**Modo:** standard
+
+**Cumplimiento del enunciado:** FULL
+
+**Módulos activados:** salidas probabilísticas y validación estadística.
 
 Los tres ejercicios están completos, son reproducibles y superan los controles
-analíticos, numéricos, estadísticos y visuales. La salvedad no procede de la
-resolución: el Excel de ratings no es cuadrado y no identifica la composición
-del bucket Caa-C. La entrega evita ocultarlo mediante un caso base explícito y
-un rango completo de sensibilidad.
+analíticos, numéricos, estadísticos y visuales. Una aclaración docente confirmó
+que el ejercicio considera ocho estados y permite eliminar cualquiera de las
+dos filas inferiores desdobladas. La resolución elimina `Ca-C`, conserva `Caa`
+y la asigna al estado agregado `Caa-C`; la convención queda explícita en el
+notebook y en el reporte.
 
 ## Integridad de fuentes
 
@@ -25,7 +32,7 @@ originales se mantienen fuera del historial porque el repositorio es público.
 | Apartado | Evidencia | Estado |
 |---|---|---|
 | 1.a | PD acumulada y primer default 1–25Y para cada rating; tres regímenes gráficos | PASS |
-| 1.b | Agregación exacta de la cohorte de 5.002 compañías y sensibilidad Caa-C | PASS |
+| 1.b | Agregación de la cohorte de 5.002 compañías bajo la convención Caa-C autorizada | PASS |
 | 1.c | P^25, distribución por rating inicial y simulación de 300.000 compañías por rating | PASS |
 | 2.a | Itô del cociente, término de covariación y condición de martingala verdadera | PASS |
 | 2.b | Derivación cerrada, isometría y convergencia de sumas de Itô | PASS |
@@ -43,14 +50,16 @@ originales se mantienen fuera del historial porque el repositorio es público.
 
 - Las nueve filas del Excel suman uno; error máximo: 2,22e-16.
 - Todos los elementos están en [0,1] y Default es absorbente.
+- La matriz operativa 8×8 conserva exactamente la fila `Caa`, elimina `Ca-C`
+  y la etiqueta como `Caa-C`, conforme a la aclaración docente.
 - La PD acumulada es monótona y las probabilidades de primer default son no negativas.
 - La suma de probabilidades de primer default 1–25Y coincide con la PD 25Y.
-- En la validación de P^25, error absoluto máximo 0,001457 y error
-  estandarizado máximo 2,16 SE; el gate era 4 SE más tolerancia discreta.
-- Sensibilidad de la PD de cohorte a 25Y:
-  - w=1 — 100% Caa: 54,1342%;
-  - w=0,5: 56,4780%;
-  - w=0 — 100% Ca-C: 57,4853%.
+- La cohorte obtiene una PD exacta 1Y de 2,2614% y una PD acumulada 25Y de
+  54,1342%.
+- En la validación de P^25, error absoluto máximo 0,001486 y error
+  estandarizado máximo 2,41 SE; el gate era 4 SE más tolerancia discreta.
+- Un segundo simulador independiente, basado en conteos multinomiales y
+  2.000.000 de compañías por rating, obtiene error máximo 0,000587 y 2,76 SE.
 
 ### Ejercicio 2
 
@@ -92,14 +101,27 @@ originales se mantienen fuera del historial porque el repositorio es público.
 - Se corrigieron dos incidencias de presentación durante la revisión:
   densidad singular de M_1 y notación con offset del precio asiático.
 
-## Salvedades y alcance
+## Supuestos y alcance
 
-1. **Bucket Caa-C.** Sin el desglose de las 304 compañías o una fila agregada
-   suministrada por la fuente, no existe una única matriz multi-periodo. El
-   parámetro w queda visible y la sensibilidad cubre todos sus valores extremos.
+1. **Bucket Caa-C.** La fuente no proporciona ponderaciones para agregar `Caa`
+   y `Ca-C`. La profesora autorizó eliminar una de las filas; se conserva `Caa`
+   como representante de `Caa-C`. Los resultados son condicionales a esa
+   convención declarada.
 2. **Precios redondeados.** Las calls se facilitan con dos decimales. Los
    coeficientes calibrados reproducen exactamente esas cotizaciones, pero sus
    últimos dígitos no deben interpretarse como precisión económica.
 3. **Modelo.** El intervalo Monte Carlo es mucho más estrecho que la incertidumbre
    de especificación. El precio exótico es condicional a la volatilidad
    cuadrática no negativa elegida.
+
+## Hallazgos materiales
+
+Ninguno. El riesgo residual del Ejercicio 1 queda limitado a la convención
+docente explícita para `Caa-C`; cambiar la fila elegida produciría resultados
+distintos, pero no constituye un defecto de la resolución entregada.
+
+## Confianza de auditoría
+
+**ALTA.** Los cálculos principales se reprodujeron por una implementación
+independiente, los notebooks no contienen errores y los reportes fueron
+verificados sin recursos externos.
