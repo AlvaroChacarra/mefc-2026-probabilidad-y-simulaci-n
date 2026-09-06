@@ -7,7 +7,9 @@ Resoluciones de **Fundamentos Matemáticos** del
 
 La resolución del examen de Procesos Estocásticos está en
 [procesos-estocasticos/](procesos-estocasticos/README.md): tres notebooks
-ejecutados, tres reportes HTML offline, gráficos, fuentes y auditoría independiente.
+ejecutados, tres reportes HTML offline, un Excel reproducible, nueve gráficos,
+una [memoria PDF](procesos-estocasticos/memoria/MEFC_2026_memoria_procesos_estocasticos.pdf)
+y una auditoría independiente.
 
 ---
 
