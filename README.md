@@ -1,7 +1,22 @@
-# MEFC 2026 — Probabilidad y Simulación
+# MEFC 2026 — Fundamentos Matemáticos
 
-Resolución del examen de **Fundamentos Matemáticos · Probabilidad y Simulación** del
+Resoluciones de **Fundamentos Matemáticos** del
 **Máster Executive en Finanzas Cuantitativas 2026** (AFI Global Education).
+
+## Procesos estocásticos
+
+La resolución del examen de Procesos Estocásticos está en
+[procesos-estocasticos/](procesos-estocasticos/README.md): tres notebooks
+ejecutados, tres reportes HTML offline, un Excel reproducible, nueve gráficos,
+una [memoria PDF](procesos-estocasticos/memoria/MEFC_2026_memoria_procesos_estocasticos.pdf)
+y una auditoría independiente.
+
+---
+
+## Probabilidad y Simulación
+
+La resolución original del examen de **Probabilidad y Simulación** se conserva
+íntegra a continuación.
 
 Cada uno de los **tres ejercicios** está resuelto en un **Jupyter notebook** (teoría explicada
 + código comentado) y acompañado de un **reporte HTML** que se abre en cualquier navegador,
@@ -9,7 +24,7 @@ Cada uno de los **tres ejercicios** está resuelto en un **Jupyter notebook** (t
 
 ---
 
-## Los tres ejercicios
+## Los tres ejercicios de Probabilidad y Simulación
 
 | # | Carpeta | Tema | Qué encontrarás |
 |---|---------|------|-----------------|

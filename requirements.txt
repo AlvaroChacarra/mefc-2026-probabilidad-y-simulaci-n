@@ -6,7 +6,7 @@ numpy>=1.24
 scipy>=1.10
 pandas>=2.0
 matplotlib>=3.7
-openpyxl>=3.1          # lectura de series_macro.xlsx
+openpyxl>=3.1          # lectura de los libros Excel de entrada
 
 # Ejecución de notebooks
 jupyter>=1.0
