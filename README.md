@@ -11,6 +11,25 @@ ejecutados, tres reportes HTML offline, un Excel reproducible, nueve gráficos,
 una [memoria PDF](procesos-estocasticos/memoria/MEFC_2026_memoria_procesos_estocasticos.pdf)
 y una auditoría independiente.
 
+### Entregable unificado
+
+La versión editorial reúne **los tres ejercicios de Procesos Estocásticos**,
+en orden de enunciado, con desarrollo pedagógico y anexos numéricos completos:
+
+- [Documento HTML de lectura vertical](output/main.html), autocontenido y offline.
+- [Memoria PDF](output/procesos_estocasticos.pdf), con el mismo contenido en 16 páginas.
+
+Esta edición se genera desde una única fuente con
+`python tools/build_output_procesos.py`. Requiere los adjuntos originales en
+`procesos-estocasticos/0-enunciado/` y el Excel existente del apartado 2.c.
+Recalcula las tablas de ratings, comprueba las réplicas del Excel y repite la
+calibración europea; las estimaciones Monte Carlo citadas proceden de los
+notebooks ya ejecutados. No sustituye ni modifica los ejercicios anteriores.
+
+Validación de esta edición: PDF renderizado y revisado, 36 fórmulas MathML,
+11 tablas y ningún recurso externo en HTML. La comprobación del HTML es estática;
+queda pendiente su revisión visual en navegador a anchuras de móvil.
+
 ---
 
 ## Probabilidad y Simulación
