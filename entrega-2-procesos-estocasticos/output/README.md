@@ -2,8 +2,8 @@
 
 La edición ampliada de los ejercicios 2 y 3 está en `main.html`, sus reportes HTML
 y los notebooks. Incluye las derivaciones paso a paso y explicita los supuestos
-de martingala y selección de la curva de volatilidad. Los PDF conservan la
-edición resumida anterior.
+de martingala y selección de la curva de volatilidad. Los dos PDF conservan su
+formato resumido, con la misma continuidad pedagógica actualizada en 2.c y 3.
 
 Para sincronizar el HTML conjunto después de editar las explicaciones de los
 notebooks: `python tools/refresh_explanations_procesos.py` desde la raíz del repo.
@@ -13,11 +13,19 @@ Los HTML incorporan Benton Sans BBVA, una paleta azul y ecuaciones SVG ya
 compuestas, con el MathML original conservado para accesibilidad. Funcionan sin
 red ni JavaScript y no incluyen logotipo. Las ecuaciones largas se distribuyen
 en varias líneas cuando se puede preservar su estructura; las restantes tienen
-desplazamiento local. Los cálculos y los notebooks no cambian.
+desplazamiento local. La revisión pedagógica modifica solo el texto de los
+notebooks: conserva todas las celdas de código, sus resultados y las semillas.
 
 Antes de regenerar: `npm ci --prefix tools`. El renderizador se ejecuta solo al
 construir los archivos. Para aplicar el diseño a un HTML existente:
 `python tools/style_mobile_html.py entrega-2-procesos-estocasticos/output/main.html`.
+
+Para reconstruir también los PDF desde los datos ya entregados, sin los adjuntos
+originales: `python tools/build_output_procesos.py --matriz-operativa` y
+`python tools/build_memoria_procesos.py --matriz-operativa`. El primer comando
+regenera y sincroniza `main.html`; los reportes individuales se reconstruyen
+por separado con `tools/nb_to_html.py`. Las explicaciones resumidas de los PDF
+se mantienen en esos dos constructores.
 
 | Material | Uso |
 |---|---|

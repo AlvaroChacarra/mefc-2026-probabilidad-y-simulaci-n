@@ -58,7 +58,10 @@ def split_units(math):
     groups, current, depth = [], [], 0
     for child in children:
         token = child.get_text() if isinstance(child,Tag) else str(child)
-        separator = isinstance(child,Tag) and child.name == 'mo' and token in ('=', '+', '−', ',')
+        # latex2mathml puede emitir las flechas narrativas como mi, no mo.
+        separator = isinstance(child,Tag) and (
+            (child.name == 'mo' and token in ('=', '+', '−', ',')) or
+            (child.name in ('mo','mi') and token in ('→', '⟶', '⇒')))
         gap = isinstance(child,Tag) and child.name == 'mspace' and child.get('width') in ('1em','2em')
         if depth == 0 and (separator or gap) and current:
             groups.append(''.join(str(x) for x in current)); current=[]

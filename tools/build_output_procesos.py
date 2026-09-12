@@ -103,14 +103,14 @@ axes[-1].set_xlabel('Año del primer default')
 fig.savefig(TMP/'default.png',dpi=190);plt.close(fig)
 fig,ax=plt.subplots(figsize=(6.7,2.9),layout='constrained')
 xx=np.linspace(-1/3,3.7,700)
-ax.plot(xx,chi2.cdf(3*xx+1,1),color='#175b54',lw=2,label='Distribución teórica')
+ax.plot(xx,chi2.cdf(3*xx+1,1),color='#001391',lw=2,label='Distribución teórica')
 ordered=np.sort(M)
-ax.plot(ordered,np.arange(1,len(M)+1)/len(M),color='#8b654b',ls='--',lw=1.4,label='5.000 réplicas del Excel')
+ax.plot(ordered,np.arange(1,len(M)+1)/len(M),color='#1973b8',ls='--',lw=1.4,label='5.000 réplicas del Excel')
 ax.set(xlabel='Valor de M₁',ylabel='Probabilidad acumulada',ylim=(0,1.02),xlim=(-.4,3.7));ax.legend(frameon=False);ax.grid(axis='y')
 fig.savefig(TMP/'cdf.png',dpi=190);plt.close(fig)
 fig,ax=plt.subplots(figsize=(6.7,2.8),layout='constrained')
 tt=np.linspace(0,2,250)
-ax.plot(tt,a*tt**2+b*tt+c,color='#175b54',lw=2)
+ax.plot(tt,a*tt**2+b*tt+c,color='#001391',lw=2)
 ax.set(xlabel='Tiempo (años)',ylabel='Volatilidad instantánea',xlim=(0,2))
 ax.yaxis.set_major_formatter(PercentFormatter(1));ax.grid(axis='y')
 fig.savefig(TMP/'vol.png',dpi=190);plt.close(fig)
@@ -212,24 +212,28 @@ p(b0,'Al diferenciar Wₜ³/3 − tWₜ, los términos Wₜ dt se cancelan y que
 p(b0,'Como control adicional, E[Iₜ] = 0. Por la isometría de Itô, Var(Iₜ) = ∫₀ᵗ E[(Wₛ² − s)²] ds. Usando E[Wₛ²] = s y E[Wₛ⁴] = 3s², el integrando es 2s² y la varianza resulta 2t³/3.')
 
 b0=page('Una martingala cuadrática','Ejercicio 2 · Apartado c.1 y c.2')
-p(b0,'Elevar una martingala al cuadrado introduce una deriva positiva. El término t³/3 del enunciado compensa exactamente esa deriva. Para verlo, definimos:')
-eq(b0,r'A_t=\int_0^t s\,dW_s,\qquad q(t)=\int_0^t s^2\,ds=\frac{t^3}{3}','A es la integral gaussiana y q su varianza acumulada.')
-eq(b0,r'M_t=A_t^2-q(t)','Proceso solicitado, escrito como cuadrado menos varianza.')
-h(b0,'Dos vías de demostración')
-p(b0,'Primera vía: Itô da d(Aₜ²) = 2tAₜ dWₜ + t² dt. Restar dq(t) = t² dt elimina la deriva, de modo que dMₜ = 2tAₜ dWₜ. Su integrando es cuadrado integrable: E[∫₀ᵀ4t²Aₜ² dt] = 2T⁶/9 < ∞ para todo horizonte finito T.')
-p(b0,'Segunda vía, que desarrollamos: calcular la esperanza condicional. Para 0 ≤ s ≤ t, escribimos Aₜ = Aₛ + ΔA. Como el integrando es determinista, ΔA es independiente de la información ℱₛ disponible hasta s, tiene media cero y varianza q(t) − q(s).')
-eq(b0,r'E[A_t^2\mid\mathcal{F}_s]=A_s^2+q(t)-q(s)','Esperanza del cuadrado futuro condicionada al pasado.')
-p(b0,'El término cruzado 2AₛΔA desaparece al tomar esperanza y E[(ΔA)²] es la varianza del incremento. Por tanto:')
-eq(b0,r'E[M_t\mid\mathcal{F}_s]=A_s^2-q(s)=M_s','La esperanza condicional verifica la propiedad de martingala.')
-p(b0,'La integrabilidad queda garantizada por E[|Mₜ|] ≤ E[Aₜ²] + q(t) = 2q(t) < ∞; además el proceso es adaptado a la información browniana.')
+p(b0,'Antes de demostrar nada, entendamos la resta del enunciado. Definimos la integral de Itô Aₜ = ∫₀ᵗs dWₛ. Es una martingala centrada y, por tener integrando determinista, es gaussiana. Su dispersión, sin embargo, crece:')
+eq(b0,r'E[A_t^2]=\operatorname{Var}(A_t)=\int_0^t s^2\,ds=\frac{t^3}{3}','El cuadrado de A tiene esperanza creciente.')
+p(b0,'Aₜ² no es martingala porque su esperanza aumenta. Mₜ = Aₜ² − t³/3 le quita exactamente ese crecimiento esperado. Esto motiva la construcción; tener media cero no basta para demostrar la propiedad de martingala.')
+eq(b0,r'q_t:=\frac{t^3}{3}=E[A_t^2]=\langle A\rangle_t','Aquí la variación cuadrática es determinista y coincide con la varianza.')
+h(b0,'Método principal: Itô y cancelación de la deriva')
+p(b0,'El enunciado pide describir dos vías y desarrollar una. Elegimos Itô. Como dAₜ = t dWₜ, aplicar f(a) = a² da:')
+eq(b0,r'd(A_t^2)=2A_t\,dA_t+d\langle A\rangle_t=2tA_t\,dW_t+t^2\,dt','Itô muestra la deriva que aparece al elevar al cuadrado.')
+p(b0,'La derivada de t³/3 es t² dt: la compensación está construida exactamente para cancelar la deriva que acabamos de obtener.')
+eq(b0,r'\boxed{dM_t=2tA_t\,dW_t}','Dinámica sin deriva del cuadrado compensado.')
+p(b0,'M₀ = 0, de modo que Mₜ = ∫₀ᵗ2sAₛ dWₛ. Para pasar de martingala local a verdadera verificamos E[∫₀ᵀ(2sAₛ)²ds] = 4∫₀ᵀs²(s³/3)ds = 2T⁶/9 < ∞. El integrando es adaptado y continuo: la integral es una martingala cuadrado integrable.')
+h(b0,'Alternativa breve: esperanza condicional')
+p(b0,'Para s < t, Aₜ = Aₛ + ∫ₛᵗu dWᵤ. El incremento futuro es independiente de ℱₛ, tiene media cero y varianza (t³ − s³)/3. Al expandir el cuadrado, el término cruzado se anula al condicionar. Restar t³/3 compensa exactamente ese aumento de varianza:')
+eq(b0,r'E[M_t\mid\mathcal{F}_s]=A_s^2+\frac{t^3-s^3}{3}-\frac{t^3}{3}=M_s','Las dos demostraciones expresan la misma compensación.')
+p(b0,'Además, E[|Mₜ|] ≤ E[Aₜ²] + qₜ = 2qₜ < ∞ y M es adaptado.')
 h(b0,'Distribución y momentos')
-p(b0,'Aₜ es normal de media cero y varianza q(t). Para t > 0, Aₜ/√q(t) es normal estándar y su cuadrado tiene distribución chi-cuadrado con un grado de libertad, denotada χ₁².')
+p(b0,'En una fecha fija t > 0, Aₜ tiene la misma distribución que √(t³/3) Z, con Z normal estándar. Por tanto Aₜ² tiene la ley de (t³/3) Z². Como Z² sigue una chi-cuadrado con un grado de libertad:')
 eq(b0,r'M_t\ \sim\ \frac{t^3}{3}(\chi_1^2-1)','Ley de M: chi-cuadrado escalada y desplazada.')
 eq(b0,r'E[M_t]=0,\qquad \operatorname{Var}(M_t)=\frac{2t^6}{9}','Media y varianza del proceso.')
-p(b0,'Se usan E[χ₁²] = 1 y Var(χ₁²) = 2. El soporte es [−t³/3, ∞): no es una normal, sino una distribución asimétrica. En t = 0, M₀ = 0 con probabilidad uno.')
+p(b0,'La ley no es normal: hemos cuadrado una normal y la hemos desplazado para que tenga media cero. E[χ₁²] = 1 y Var(χ₁²) = 2 dan E[Mₜ] = qₜ(1 − 1) = 0 y Var(Mₜ) = 2qₜ². El soporte es [−t³/3, ∞). En t = 0, M₀ = 0; en t = 1, M₁ tiene ley (χ₁² − 1)/3, media 0 y varianza 2/9.')
 
 b0=page('Comprobación empírica en Excel','Ejercicio 2 · Apartado c.3')
-p(b0,'Una trayectoria muestra cómo evoluciona el proceso; muchas réplicas en t = 1 permiten contrastar su distribución. Son objetivos distintos y el libro contiene ambos.')
+p(b0,'Queremos verificar empíricamente en t = 1 la media, varianza, forma y soporte teóricos. Muchas réplicas en esa fecha permiten ese contraste; una trayectoria sirve para ver la evolución temporal. El libro separa ambos objetivos.')
 h(b0,'Trayectoria en 100 pasos')
 p(b0,'Se toman tⱼ = j/100, para j = 0,…,100, y normales estándar independientes Zⱼ. En cada paso se actualiza:')
 eq(b0,r'\Delta A_j=\sqrt{\frac{t_j^3-t_{j-1}^3}{3}}\,Z_j','Incremento exacto de A entre dos fechas consecutivas.')
@@ -247,22 +251,29 @@ p(b0,'La simulación respalda la ley y los momentos; la demostración de marting
 
 b0=page('Del modelo a la fórmula de la call','Ejercicio 3 · Apartados 1 y 2')
 p(b0,'El enunciado fija S₀ = 100, tipo continuo r = 0,01 y volatilidad determinista σ(t). Interpretamos la dinámica bajo la medida de valoración neutral al riesgo, sin dividendos; los importes se expresan en unidades monetarias.')
+p(b0,'El hilo conductor es σ(t) → V(T) → precio de la call europea. Al ser σ determinista, toda su influencia sobre la distribución terminal se resume en la varianza acumulada:')
 eq(b0,r'V(t)=\int_0^t\sigma^2(s)\,ds','V es la varianza acumulada del logaritmo del precio.')
+p(b0,'Queremos verificar que la solución exponencial reproduce la SDE al aplicarle Itô. La resta −V(t)/2 no es arbitraria: compensa la corrección positiva de la exponencial para dejar una deriva exactamente igual a rSₜ dt.')
 p(b0,'Definimos Lₜ = rt − V(t)/2 + ∫₀ᵗσ(s)dWₛ. Su diferencial es (r − σ²(t)/2)dt + σ(t)dWₜ y su variación cuadrática es σ²(t)dt. Al aplicar Itô a S₀ exp(Lₜ), la corrección del exponencial cancela −σ²(t)/2:')
 eq(b0,r'dS_t=S_t\left(dL_t+\frac12d\langle L\rangle_t\right)=rS_t\,dt+\sigma(t)S_t\,dW_t','Verificación de la dinámica del precio propuesto.')
 p(b0,'También se cumple la condición inicial. Queda verificada la solución del enunciado:')
 eq(b0,r'S_t=S_0\exp\left(rt-\frac12V(t)+\int_0^t\sigma(s)\,dW_s\right)','Solución lognormal con volatilidad determinista.')
 h(b0,'La call europea')
-p(b0,'La integral gaussiana hasta T tiene media cero y varianza V(T). Así, log S_T tiene media log S₀ + rT − V(T)/2 en el vencimiento T. Para strike K y V(T) > 0 definimos:')
+p(b0,'La call europea depende solo de S_T. La integral gaussiana hasta T tiene media cero y varianza V(T); así, log S_T es normal con media log S₀ + rT − V(T)/2 y varianza V(T). Basta sustituir σ²T por V(T) en Black-Scholes.')
+eq(b0,r'\sigma_{\mathrm{ef}}(T)=\sqrt{\frac{V(T)}{T}}','Volatilidad constante equivalente para el vencimiento T.')
+p(b0,'No es σ(T) ni la media aritmética de σ(t): es la raíz de la media temporal de σ²(t). Para strike K y V(T) > 0 definimos:')
 eq(b0,r'd_1=\frac{\log(S_0/K)+rT+V(T)/2}{\sqrt{V(T)}},\qquad d_2=d_1-\sqrt{V(T)}','Umbrales normales de la fórmula de valoración.')
 p(b0,'La probabilidad de acabar por encima de K es Φ(d₂). La esperanza truncada del activo es S₀ exp(rT) Φ(d₁), que se obtiene completando el cuadrado en la densidad normal. Descontar ambas partes del payoff produce:')
 eq(b0,r'\boxed{C=S_0\Phi(d_1)-Ke^{-rT}\Phi(d_2)}','Precio de la call europea con volatilidad determinista.')
 note(b0,'La fórmula es la de Black-Scholes con σ√T sustituido por √V(T). Si σ es constante, V(T) = σ²T y se recupera el caso habitual. Si V(T) = 0, el precio es max(S₀ − K exp(−rT), 0).')
 
 b0=page('Calibrar la volatilidad cuadrática','Ejercicio 3 · Apartado 3')
-p(b0,'Los tres precios de call, todos con K = 100, identifican tres varianzas acumuladas. Primero invertimos la fórmula europea en cada vencimiento; después ajustamos los tres coeficientes de σ(t) = at² + bt + c.')
+p(b0,'Tenemos tres precios y tres parámetros a, b, c, pero cada call no observa σ(T): observa V(T). El recorrido es 3 calls → 3 varianzas acumuladas → 3 ecuaciones → (a,b,c).')
+h(b0,'Paso 1: de los precios a las varianzas')
+p(b0,'Para cada vencimiento resolvemos C(Tⱼ,Vⱼ) = Cⱼ de mercado. La call crece estrictamente con V > 0, por lo que cada precio interior a las cotas de no arbitraje determina una única varianza. El notebook comprueba max(S₀ − K exp(−rT), 0) < C < S₀ e invierte con brentq, una búsqueda escalar acotada.')
 table(b0,['T (años)','Call de mercado','V(T) implícita','Call reconstruida'],[[num(t,2),num(pr,2),num(v,10),num(cf,8)]for t,pr,v,cf in zip(times,prices,Vs,fit)])
-p(b0,'Al elevar el polinomio al cuadrado e integrar término a término se obtiene la relación dada en el enunciado:')
+h(b0,'Paso 2: de las varianzas a los coeficientes')
+p(b0,'Imponemos que la integral de (as² + bs + c)² entre 0 y cada Tⱼ sea Vⱼ, para j = 1,2,3: tres ecuaciones para tres parámetros. No interpolamos volatilidades efectivas; ajustamos sus varianzas integradas. Elevar el polinomio al cuadrado e integrar da:')
 eq(b0,r'V(t)=\frac{a^2t^5}{5}+\frac{abt^4}{2}+\frac{(b^2+2ac)t^3}{3}+bct^2+c^2t','Varianza acumulada para la volatilidad cuadrática.')
 p(b0,'Se resuelve el sistema V(1) = 0,0521320003, V(1,25) = 0,0899877821 y V(2) = 0,3292216020, usando internamente las cifras sin redondear. La raíz elegida es:')
 eq(b0,rf'a={a:.12f},\quad b={b:.12f},\quad c={c:.12f}','Coeficientes calibrados con el tiempo expresado en años.')
@@ -272,7 +283,9 @@ note(b0,'Criterio de modelización: se exige σ(t) ≥ 0 en [0,2]. La búsqueda 
 p(b0,'El ajuste europeo no determina por sí solo toda la trayectoria de la volatilidad. La no negatividad es una convención económica explícita, no una condición escrita en el enunciado. Cambiar globalmente el signo de σ no cambia la ley de S; elegir otra forma de σ² entre vencimientos sí puede afectar a la asiática.')
 
 b0=page('Valorar la opción asiática','Ejercicio 3 · Apartado 4')
+p(b0,'Europea → S_T → fórmula analítica. Asiática aritmética → cuatro fijaciones → Monte Carlo. Ahora necesitamos una distribución conjunta, no solo terminal; además el promedio aritmético de lognormales no es, en general, lognormal. V(t) sigue determinando las varianzas y la dependencia entre fechas.')
 p(b0,'El payoff depende de la media aritmética de S en 1,15; 1,30; 1,60 y 1,70 años, pero se paga en T = 2. Por eso se simulan las cuatro fijaciones y se descuenta hasta dos años, no hasta la última fijación.')
+p(b0,'Primero promediamos los cuatro precios y después aplicamos la parte positiva al promedio menos K. Promediar cuatro payoffs de calls sería otro producto.')
 eq(b0,r'C_A=e^{-0.01\cdot2}E\left[\max\left(\frac{S_{1.15}+S_{1.30}+S_{1.60}+S_{1.70}}{4}-100,0\right)\right]','Valor actual de la call sobre el promedio aritmético de las cuatro fijaciones.')
 h(b0,'Simulación exacta en las fechas necesarias')
 p(b0,'Tomamos t₀ = 0 y las cuatro fechas tᵢ anteriores. Para cada trayectoria generamos cuatro normales estándar independientes Zᵢ y acumulamos los incrementos de varianza:')
@@ -343,12 +356,32 @@ styles={
  'th':ParagraphStyle('th',fontName='Bold',fontSize=7.1,leading=10,textColor=HexColor('#175b54')),
 }
 WIDTH=A4[0]-108
-def para(s,style='p'):return Paragraph(escape(s),styles[style])
+active_styles=styles
+def para(s,style='p'):return Paragraph(escape(s),active_styles[style])
 story=[]
 html=['<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>MEFC 2026 · Procesos estocásticos</title><style>'+CSS+'</style></head><body><main>']
 nav='<nav aria-label="Índice"><details><summary>Contenido de la memoria</summary>'+''.join(f'<a href="#seccion-{i}">{escape(k)} · {escape(t)}</a>'for i,(t,k,_)in enumerate(pages))+'</details></nav>'
 equation_count=0
 for i,(title,kicker,blocks) in enumerate(pages):
+    # Mantener la edición compacta de 2.c y 3 sin reducir el cuerpo de lectura
+    # ni alterar la maquetación de los otros ejercicios.
+    editorial_section=i in {7,8,9,10,11}
+    active_styles=styles
+    if editorial_section:
+        active_styles={name:ParagraphStyle('editorial-'+name,parent=style)
+                       for name,style in styles.items()}
+        active_styles['p'].leading=12.8
+        active_styles['p'].spaceAfter=6
+        active_styles['h'].spaceBefore=8
+        active_styles['h'].spaceAfter=5
+        active_styles['title'].fontSize=22
+        active_styles['title'].leading=26
+        active_styles['title'].spaceAfter=13
+        active_styles['caption'].spaceAfter=7
+        for name in ('p','title','td','smalltd'):
+            active_styles[name].textColor=HexColor('#070e46')
+        for name in ('h','kicker','th'):
+            active_styles[name].textColor=HexColor('#001391')
     if i:story.append(PageBreak())
     story.extend([para(kicker.upper(),'kicker'),para(title,'title')])
     html.append(f'<section id="seccion-{i}"><header><p class="kicker">{escape(kicker)}</p><h{1 if i==0 else 2}>{escape(title)}</h{1 if i==0 else 2}></header>')
@@ -375,7 +408,8 @@ for i,(title,kicker,blocks) in enumerate(pages):
             im=PILImage.open(buf);iw,ih=im.size
             target=min(WIDTH,iw*72/270)
             equation=Image(buf,width=target,height=ih*target/iw)
-            story.extend([Spacer(1,4),equation,Spacer(1,13)])
+            story.extend([Spacer(1,3 if editorial_section else 4),equation,
+                          Spacer(1,8 if editorial_section else 13)])
             equation_count+=1
         elif kind=='table':
             headers,rows=item[1:];wide=len(headers)>4
@@ -394,7 +428,7 @@ for i,(title,kicker,blocks) in enumerate(pages):
             encoded=base64.b64encode(path.read_bytes()).decode()
             html.append(f'<figure><img src="data:image/png;base64,{encoded}" alt="{escape(caption,quote=True)}"><figcaption>{escape(caption)}</figcaption></figure>')
             im=PILImage.open(path);iw,ih=im.size
-            target=min(WIDTH,{'cdf.png':350,'vol.png':380}.get(item[1],430))
+            target=min(WIDTH,{'cdf.png':320,'vol.png':300}.get(item[1],430))
             story.append(KeepTogether([Image(str(path),width=target,height=ih*target/iw),Spacer(1,6),para(caption,'caption')]))
     html.append('</section>')
 html.append('<footer>MEFC 2026 · Procesos estocásticos · Fin de la memoria</footer></main></body></html>')
