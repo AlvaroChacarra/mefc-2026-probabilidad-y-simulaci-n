@@ -1,162 +1,21 @@
-# MEFC 2026 — Fundamentos Matemáticos
+# MEFC 2026 · Fundamentos Matemáticos
 
-Resoluciones de **Fundamentos Matemáticos** del
-**Máster Executive en Finanzas Cuantitativas 2026** (AFI Global Education).
+Dos entregas, cada una con sus enunciados, ejercicios y materiales de revisión.
 
-## Procesos estocásticos
+| Entrega | Contenido | Acceso |
+|---|---|---|
+| **1 · Probabilidad y Simulación** | Monte Carlo e importance sampling; transformaciones normales; capital económico con cópulas | [Abrir entrega 1](entrega-1-probabilidad-y-simulacion/README.md) |
+| **2 · Procesos Estocásticos** | Ratings y cadenas de Markov; Itô y martingalas; volatilidad determinista y opción asiática | [Abrir entrega 2](entrega-2-procesos-estocasticos/README.md) |
 
-La resolución del examen de Procesos Estocásticos está en
-[procesos-estocasticos/](procesos-estocasticos/README.md): tres notebooks
-ejecutados, tres reportes HTML offline, un Excel reproducible, nueve gráficos,
-una [memoria PDF](procesos-estocasticos/memoria/MEFC_2026_memoria_procesos_estocasticos.pdf)
-y una auditoría independiente.
+## Entregables de Procesos Estocásticos
 
-### Entregable unificado
+- [Documento HTML](entrega-2-procesos-estocasticos/output/main.html): los tres ejercicios, lectura vertical y offline.
+- [PDF para entregar](entrega-2-procesos-estocasticos/output/procesos_estocasticos.pdf): el mismo contenido.
+- [Excel de resultados](entrega-2-procesos-estocasticos/output/procesos_estocasticos.xlsx).
+- [Todos los outputs](entrega-2-procesos-estocasticos/output/README.md): memorias, reportes por ejercicio, gráficos y simulación Excel.
 
-La versión editorial reúne **los tres ejercicios de Procesos Estocásticos**,
-en orden de enunciado, con desarrollo pedagógico y anexos numéricos completos:
+## Ejecutar y regenerar
 
-- [Documento HTML de lectura vertical](output/main.html), autocontenido y offline.
-- [Memoria PDF](output/procesos_estocasticos.pdf), con el mismo contenido en 16 páginas.
+Desde la raíz del repositorio, instala `requirements.txt` en un entorno virtual y abre los notebooks con Jupyter. Ejecuta cada notebook desde su propia carpeta para resolver las rutas relativas a datos y outputs. Las semillas están fijadas; los HTML ya incluyen los resultados y se pueden leer sin instalar nada.
 
-Esta edición se genera desde una única fuente con
-`python tools/build_output_procesos.py`. Requiere los adjuntos originales en
-`procesos-estocasticos/0-enunciado/` y el Excel existente del apartado 2.c.
-Recalcula las tablas de ratings, comprueba las réplicas del Excel y repite la
-calibración europea; las estimaciones Monte Carlo citadas proceden de los
-notebooks ya ejecutados. No sustituye ni modifica los ejercicios anteriores.
-
-Validación de esta edición: PDF renderizado y revisado, 36 fórmulas MathML,
-11 tablas y ningún recurso externo en HTML. La comprobación del HTML es estática;
-queda pendiente su revisión visual en navegador a anchuras de móvil.
-
----
-
-## Probabilidad y Simulación
-
-La resolución original del examen de **Probabilidad y Simulación** se conserva
-íntegra a continuación.
-
-Cada uno de los **tres ejercicios** está resuelto en un **Jupyter notebook** (teoría explicada
-+ código comentado) y acompañado de un **reporte HTML** que se abre en cualquier navegador,
-**sin conexión a internet**: las fórmulas y los gráficos van incrustados.
-
----
-
-## Los tres ejercicios de Probabilidad y Simulación
-
-| # | Carpeta | Tema | Qué encontrarás |
-|---|---------|------|-----------------|
-| **1** | [`1-monte-carlo-importance-sampling/`](1-monte-carlo-importance-sampling/) | Monte Carlo e Importance Sampling | Estimación de la integral `I = ∫₀¹ cos(πx/2) dx = 2/π` por tres vías (analítica, Monte Carlo directo e importance sampling), inversión de la CDF con la **fórmula de Cardano** y análisis de **reducción de varianza**. |
-| **2** | [`2-transformaciones-normales/`](2-transformaciones-normales/) | Transformaciones de una normal | Con `X ~ N(0,1)`, densidad de `Y = g(X)` por simulación según el parámetro α (con análisis de continuidad), derivación analítica de la densidad y demostración de la densidad de `Z = h(X)`, todo verificado por simulación. |
-| **3** | [`3-capital-economico-copulas/`](3-capital-economico-copulas/) | Capital económico con cópulas | Capital económico (percentil 95 %) de un banco: **PCA por país** sobre series macro → **matriz de correlaciones 5×5** → simulación de pérdidas con **cópula gaussiana** y **cópula t de Student** → comparación del capital diversificado. |
-
-**Resultados clave:** (1) el importance sampling reduce la varianza ≈ **95×**; (2) `Y` es continua
-salvo en α = 0, donde aparece un átomo de probabilidad ½; (3) la diversificación baja el capital de
-**92 → 85**, y la cópula t exige mucho más capital en la cola (dependencia de colas).
-
----
-
-## Ver los reportes (rápido, sin instalar nada)
-
-Abre en tu navegador cualquiera de los reportes — son autocontenidos:
-
-```
-1-monte-carlo-importance-sampling/resultados/ejercicio1_reporte.html
-2-transformaciones-normales/resultados/ejercicio2_reporte.html
-3-capital-economico-copulas/resultados/ejercicio3_reporte.html
-```
-
-Esto es suficiente para **leer y revisar** los ejercicios. Si además quieres **ejecutar** el
-código, sigue los pasos de abajo.
-
----
-
-## Reproducir los ejercicios paso a paso
-
-### 1. Descargar el repositorio
-
-```bash
-git clone <URL-del-repositorio>
-cd mefc-2026-probabilidad-y-simulaci-n
-```
-
-### 2. Crear un entorno virtual (recomendado)
-
-**macOS / Linux**
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-**Windows (PowerShell)**
-```powershell
-py -m venv .venv
-.venv\Scripts\Activate.ps1
-```
-
-### 3. Instalar las librerías
-
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-### 4. Abrir y ejecutar los notebooks
-
-```bash
-jupyter notebook
-```
-
-Navega a la carpeta del ejercicio y abre su `.ipynb`. Para ejecutarlo entero desde la terminal:
-
-```bash
-jupyter nbconvert --to notebook --execute --inplace \
-    1-monte-carlo-importance-sampling/ejercicio1_monte_carlo_importance_sampling.ipynb
-```
-
-### 5. (Opcional) Regenerar el reporte HTML offline
-
-```bash
-python tools/nb_to_html.py \
-    1-monte-carlo-importance-sampling/ejercicio1_monte_carlo_importance_sampling.ipynb \
-    1-monte-carlo-importance-sampling/resultados/ejercicio1_reporte.html
-```
-
-El script ejecuta `nbconvert`, convierte el LaTeX a **MathML** e incrusta todo, de modo que el
-HTML resultante se ve correctamente sin conexión.
-
----
-
-## Estructura del repositorio
-
-```
-.
-├── 0-enunciado/                       # Enunciado (PDF) y datos (series_macro.xlsx)
-├── 1-monte-carlo-importance-sampling/
-│   ├── ejercicio1_*.ipynb             # notebook con la resolución
-│   └── resultados/                    # reporte HTML + gráficos
-├── 2-transformaciones-normales/
-│   ├── ejercicio2_*.ipynb
-│   └── resultados/
-├── 3-capital-economico-copulas/
-│   ├── ejercicio3_*.ipynb
-│   └── resultados/
-├── tools/
-│   └── nb_to_html.py                  # genera el reporte HTML offline
-├── requirements.txt
-└── README.md
-```
-
-Cada carpeta de ejercicio contiene siempre lo mismo: el **notebook** con la resolución y una
-subcarpeta **`resultados/`** con el **reporte HTML** y las **figuras** en PNG.
-
----
-
-## Notas
-
-- Los datos macro del Ejercicio 3 (World Bank / OECD / ILO / IMF-IFS, licencia CC BY-4.0) cubren
-  1991–2024. Para Francia, Italia y Alemania la fuente no publica el *tipo de interés de depósito*,
-  por lo que esos países tienen 3 series macro en lugar de 4; la PCA usa las series disponibles.
-- Los notebooks fijan las semillas aleatorias: las cifras del texto coinciden con las que produce
-  el código al ejecutarse.
+`tools/` contiene las herramientas compartidas. Las instrucciones de cada entrega indican los datos necesarios y cómo regenerar sus reportes.

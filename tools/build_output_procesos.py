@@ -11,6 +11,7 @@ import base64
 import json
 import hashlib
 import sys
+import argparse
 import numpy as np
 from scipy.optimize import brentq, root
 from scipy.stats import norm, chi2
@@ -31,17 +32,26 @@ from PIL import Image as PILImage
 import latex2mathml.converter
 
 ROOT = Path(__file__).resolve().parents[1]
-PROC = ROOT / 'procesos-estocasticos'
-OUT = ROOT / 'output'
+PROC = ROOT / 'entrega-2-procesos-estocasticos'
+OUT = PROC / 'output'
 TMP = ROOT / 'tmp' / 'output_procesos'
 OUT.mkdir(exist_ok=True)
 TMP.mkdir(parents=True, exist_ok=True)
 RATINGS = ['Aaa','Aa','A','Baa','Ba','B','Caa-C']
 STATES = RATINGS + ['Default']
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--matriz-operativa', action='store_true',
+                    help='Reconstruir desde la matriz corregida del Excel entregado, sin los adjuntos originales.')
+args = parser.parse_args()
 source = PROC / '0-enunciado' / 'matriz-ratings.xlsx'
-ws = load_workbook(source, data_only=True).active
-Q = np.array([[ws.cell(i,j).value for j in range(3,11)] for i in range(3,12)],float)
-P = Q[[0,1,2,3,4,5,6,8]]
+if args.matriz_operativa:
+    source = OUT / 'procesos_estocasticos.xlsx'
+    ws = load_workbook(source, data_only=True)['Datos']
+    P = np.array([[ws.cell(i,j).value for j in range(2,10)] for i in range(8,16)],float)
+else:
+    ws = load_workbook(source, data_only=True).active
+    Q = np.array([[ws.cell(i,j).value for j in range(3,11)] for i in range(3,12)],float)
+    P = Q[[0,1,2,3,4,5,6,8]]
 assert P.shape == (8,8) and np.all(P >= 0)
 assert np.max(abs(P.sum(1)-1)) < 1e-14
 assert np.array_equal(P[-1], [0,0,0,0,0,0,0,1])
@@ -53,7 +63,7 @@ g = f @ w
 P25 = np.linalg.matrix_power(P,25)
 assert counts.sum()==5002 and np.all(f >= 0)
 assert np.allclose(f.sum(0),F[-1])
-bookpath = PROC / '2-ito-martingalas/resultados/ejercicio2_simulacion_Mt.xlsx'
+bookpath = OUT / 'ejercicio-2/ejercicio2_simulacion_Mt.xlsx'
 book = load_workbook(bookpath, data_only=True)
 M = np.array([book['Replica_t1'].cell(i,4).value for i in range(3,5003)])
 Z = np.array([book['Replica_t1'].cell(i,2).value for i in range(3,5003)])
@@ -134,6 +144,7 @@ p(b0,'La matriz anual P indica cómo puede cambiar el rating en un año. Su elem
 p(b0,'Default es absorbente: una compañía que ha llegado a él permanece allí. Por eso, estar en default en el año n equivale a haber hecho default en algún momento hasta ese año.')
 eq(b0,r'F_i(n)=(P^n)_{iD},\qquad n=1,\ldots,25','Probabilidad acumulada de default desde el rating i en el año n.')
 p(b0,'D identifica Default; i identifica el rating inicial. La potencia Pⁿ encadena n transiciones anuales. Para un rating inicialmente solvente fijamos Fᵢ(0) = 0.')
+note(b0,'Por qué Pⁿ suma todos los caminos. Cada camino tiene como probabilidad el producto de sus transiciones: (P²)ᵢD = Σⱼ Pᵢⱼ PⱼD; (P³)ᵢD = Σⱼ Σₖ Pᵢⱼ Pⱼₖ PₖD. Las sumas recorren todos los estados intermedios, incluido D: P³ = P²P añade un paso a cada camino de dos años. En general, (Pⁿ)ᵢⱼ suma todos los caminos de i a j en n transiciones. Ejemplo ilustrativo, distinto del dato del ejercicio: con orden A, B, D y filas de P (0.7, 0.2, 0.1), (0.1, 0.6, 0.3), (0, 0, 1), (P²)AD = 0.7×0.1 + 0.2×0.3 + 0.1×1 = 0.23. Son A→A→D, A→B→D y A→D→D. Como PDD = 1, el último camino conserva el default previo: (Pⁿ)ᵢD = Pr(τᵢ ≤ n), donde τᵢ es el año del primer default.')
 p(b0,'Para obtener el primer default en un año concreto restamos el acumulado del año anterior:')
 eq(b0,r'f_i(n)=F_i(n)-F_i(n-1)','Probabilidad de primer default exactamente en el año n.')
 table(b0,['Rating inicial','Default en 1 año','Acumulado a 25 años'],[[r,pct(F[0,i]) if F[0,i]>=1e-6 else f'{100*F[0,i]:.3e} %',pct(F[-1,i])]for i,r in enumerate(RATINGS)])
@@ -147,25 +158,28 @@ p(b0,'Los máximos dentro de la ventana de 25 años se observan en los años 25,
 note(b0,'El máximo de Aaa en el año 25 es solo el mayor valor dentro de la ventana solicitada. No demuestra que sea el máximo de toda su distribución temporal.')
 
 b0=page('La cohorte de 5.002 compañías','Ejercicio 1 · Apartado b')
-p(b0,'El enunciado da 136 compañías Aaa, 694 Aa, 1.298 A, 1.175 Baa, 578 Ba, 817 B y 304 Caa-C. No ponderamos los ratings por igual: cada grupo pesa según su tamaño inicial.')
-eq(b0,r'w_i=\frac{N_i}{5002},\qquad g(n)=\sum_{i=1}^{7}w_i f_i(n)','Proporción esperada de compañías que hacen default exactamente en el año n.')
-p(b0,'Nᵢ es el número inicial de compañías del rating i; wᵢ su proporción y g(n) la proporción de toda la cohorte que hace default en el año n. El número esperado es 5.002 × g(n); puede no ser entero porque es una esperanza.')
-h(b0,'Cálculo del primer año')
-p(b0,'Se multiplican los siete tamaños iniciales por la columna Default de P y se suman. El total esperado es 113,12 compañías; al dividir por 5.002 se obtiene el 2,2614 %. La tabla siguiente resume los resultados, y el anexo C recoge los 25 años.')
+p(b0,'¿Cuántas compañías esperamos que lleguen a Default? En 1.a calculamos probabilidades por rating inicial; ahora las ponderamos por el número de empresas de cada grupo.')
+p(b0,'El enunciado da el vector de conteos N₀ = (136, 694, 1298, 1175, 578, 817, 304, 0), en orden Aaa, Aa, A, Baa, Ba, B, Caa-C, Default. Son 136 empresas Aaa, 694 Aa, etc.; suman 5.002.')
+eq(b0,r'N_n=N_0P^n','N sub n contiene el número esperado de compañías en cada estado al terminar el año n.')
+p(b0,'Nₙ contiene números esperados por estado. Su componente Default, [Nₙ]D, cuenta los defaults acumulados hasta n: quienes llegaron antes permanecen allí.')
+eq(b0,r'[N_0P]_D=\sum_i N_{0,i}P_{i,D}','Primer año: sumar el tamaño de cada grupo multiplicado por su probabilidad de default.')
+p(b0,'En el año 1 cada grupo aporta N₀,ᵢ × Pᵢ,D. La suma da 113,12 compañías esperadas (2,2614 %). Es una esperanza matemática: el número realizado de defaults siempre será entero.')
+eq(b0,r'd_n=[N_0P^n]_D-[N_0P^{n-1}]_D=\sum_i N_{0,i}f_i(n)','Número esperado de primeros defaults durante el año n, por diferencia de acumulados.')
+p(b0,'Restamos acumulados como en 1.a: fᵢ(n) = Fᵢ(n) − Fᵢ(n−1). La tabla usa g(n) = dₙ/5002, proporción esperada de toda la cohorte; wᵢ = N₀,ᵢ/5002 son los pesos del código.')
 table(b0,['Año','Proporción en ese año','Compañías esperadas'],[[str(n),pct(g[n-1]),num(5002*g[n-1],2)]for n in [1,2,3,5,10,15,20,25]])
-note(b0,f'El máximo anual de la cohorte ocurre en el año {np.argmax(g)+1}. Sumando las proporciones de los 25 años se obtiene {pct(g.sum())}, equivalente a {num(5002*g.sum(),2)} defaults esperados.')
-p(b0,'La linealidad de la esperanza permite sumar los defaults esperados aunque las compañías no fueran independientes. La independencia sería una hipótesis adicional para estudiar la dispersión del total, que aquí no se pide.')
+p(b0,f'El máximo anual ocurre en el año {np.argmax(g)+1}; el acumulado a 25 años es {pct(g.sum())}: {num(5002*g.sum(),2)} defaults esperados. El anexo C contiene los 25 años. Sumar esperanzas no exige independencia; estudiar la dispersión del total sí requeriría especificar su dependencia.')
 
 b0=page('Distribución del rating a 25 años','Ejercicio 1 · Apartado c')
-p(b0,'Si conocemos el rating inicial, utilizamos su fila de P²⁵. Si elegimos una compañía al azar de toda la cohorte y no condicionamos por su rating inicial, ponderamos esas filas con los pesos anteriores.')
-eq(b0,r'\pi_{25}=\pi_0P^{25},\qquad \pi_0=(w_1,\ldots,w_7,0)','Distribución a 25 años de una compañía elegida al azar de la cohorte.')
-p(b0,'Los vectores π son vectores fila de ocho probabilidades en el orden Aaa, Aa, A, Baa, Ba, B, Caa-C, Default. La tabla muestra cada distribución condicional; todas sus filas suman 100 % antes del redondeo.')
+p(b0,'Elegimos una empresa uniformemente entre las 5.002. Si aún no observamos su rating, X₀ es aleatorio: π₀ = N₀/5002 y Pr(X₀ = A) = 1298/5002. Xₙ es su estado al terminar el año n; π₀ se llama p₀ en el notebook.')
+eq(b0,r'\Pr(X_{25}=j)=[\pi_0P^{25}]_j=\sum_i\pi_{0,i}(P^{25})_{i,j}','Distribución no condicionada al rating inicial: mezcla de las filas con los pesos de la cohorte.')
+p(b0,'El enunciado también pide los distintos ratings de partida. Si conocemos X₀ = i, usamos Pr(X₂₅ = j | X₀ = i) = (P²⁵)ᵢⱼ. Cada fila de P²⁵ es una distribución condicionada; π₀P²⁵ es una sola distribución sin observar el rating inicial.')
 table(b0,['Origen']+STATES,[[r]+[num(x*100,3) for x in P25[i]] for i,r in enumerate(RATINGS)])
-p(b0,'Todos los valores de la tabla anterior están en %. La distribución no condicionada de la cohorte es:')
-table(b0,['Estado a 25 años','Probabilidad'],[[r,pct(x)] for r,x in zip(STATES,np.r_[w,0]@P25)])
+p(b0,'Distribución no condicionada de la empresa elegida al azar:')
+table(b0,['Origen']+STATES,[['Aleatoria']+[num(x*100,4) for x in np.r_[w,0]@P25]])
+p(b0,'Ambas tablas están en %. Las filas suman 100 % antes de redondear. Ejemplo ilustrativo: 80 % A y 20 % B, con PD del 10 % y 50 %, dan PD aleatoria 0,8×0,10 + 0,2×0,50 = 18 %; si sabemos que es A, la PD es 10 %.')
 h(b0,'Comprobación por simulación')
-p(b0,'El notebook simula 300.000 cadenas desde cada rating, avanzando 25 veces con la fila de transición correspondiente al estado actual. Las frecuencias terminales se comparan con P²⁵: el error absoluto máximo es 0,001486, es decir, 0,1486 puntos porcentuales.')
-p(b0,'La discrepancia máxima estandarizada es 2,41 errores estándar. Para una celda con probabilidad p, el error estándar de su frecuencia es √[p(1−p)/300.000]. La concordancia es compatible con variabilidad Monte Carlo; no se exige igualdad exacta entre frecuencias y probabilidades.')
+p(b0,'1. Sin condicionar, sortear X₀ con π₀; condicionando, fijar X₀ = i. 2. Sortear X₁ con la fila de X₀, X₂ con la fila de X₁ y continuar hasta X₂₅; Default permanece absorbente. 3. Repetir: las frecuencias aproximan π₀P²⁵ o la fila i de P²⁵, respectivamente.')
+p(b0,'El notebook ejecuta 300.000 trayectorias por rating y después pondera sus frecuencias con π₀. Esta mezcla estima la ley no condicionada; no es una segunda simulación con X₀ sorteado. El error máximo por celda condicionada es 0,001486 (0,1486 pp), o 2,41 errores estándar. Su error estándar es √[p(1−p)/300.000]; las frecuencias no tienen por qué igualar exactamente las probabilidades.')
 
 b0=page('El cociente de dos procesos','Ejercicio 2 · Apartado a')
 p(b0,'Buscamos la deriva μ que hace martingala a Yₜ = Xₜ/Nₜ. La idea es compensar no solo las derivas originales, sino también las correcciones de Itô y la correlación de los dos brownianos.')
