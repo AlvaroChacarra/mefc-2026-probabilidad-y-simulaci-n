@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import argparse
+
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -31,8 +33,12 @@ from reportlab.platypus.tableofcontents import TableOfContents
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PROC = ROOT / "procesos-estocasticos"
-OUT = PROC / "memoria" / "MEFC_2026_memoria_procesos_estocasticos.pdf"
+PROC = ROOT / "entrega-2-procesos-estocasticos"
+OUT = PROC / "output" / "memoria_detallada.pdf"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--matriz-operativa", action="store_true",
+                    help="Usar la matriz corregida del Excel entregado en lugar del adjunto original.")
+args = parser.parse_args()
 
 NAVY = colors.HexColor("#17365D")
 BLUE = colors.HexColor("#2F75B5")
@@ -219,6 +225,11 @@ def new_chapter(story, title):
 
 
 def matrix_rows():
+    if args.matriz_operativa:
+        ws = load_workbook(PROC / "output" / "procesos_estocasticos.xlsx", data_only=True)["Datos"]
+        return [["Origen"] + [ws.cell(7,c).value for c in range(2,10)]] + [
+            [ws.cell(i,1).value] + [f"{ws.cell(i,c).value:.6f}" for c in range(2,10)]
+            for i in range(8,16)]
     wb = load_workbook(PROC / "0-enunciado" / "matriz-ratings.xlsx", data_only=True)
     ws = wb.active
     headers = [ws.cell(2, c).value for c in range(3, 11)]
@@ -232,9 +243,9 @@ def matrix_rows():
 
 
 def build_story():
-    f1 = PROC / "1-cadenas-markov-ratings" / "resultados"
-    f2 = PROC / "2-ito-martingalas" / "resultados"
-    f3 = PROC / "3-volatilidad-determinista-asiatica" / "resultados"
+    f1 = PROC / "output" / "ejercicio-1"
+    f2 = PROC / "output" / "ejercicio-2"
+    f3 = PROC / "output" / "ejercicio-3"
     S = []
 
     S += [Spacer(1, 3.0 * cm), P("MEFC 2026", "CoverSub"),
@@ -322,9 +333,14 @@ def build_story():
           figure(f1 / "grafico_1a_primer_default_ratings.png", "Figura 1. Probabilidad incondicional de primer default por año y rating inicial.", max_h=10.8*cm)]
 
     new_chapter(S, "6. Ejercicio 1.b - cohorte de 5.002 compañías")
-    S += [P("El PDF proporciona los conteos iniciales: 136 Aaa, 694 Aa, 1.298 A, 1.175 Baa, 578 Ba, 817 B y 304 Caa-C. La suma es 5.002."),
-          formula("Proporción de default en año n = [Σᵢ Nᵢ fᵢ(n)] / 5.002"),
-          P("Nᵢ es el número de compañías que empiezan en el rating i. La suma pondera cada curva de primer default por el tamaño real de su grupo."),
+    S += [P("¿Cuántas empresas esperamos que hagan default? En 1.a estudiamos una empresa condicionada a su rating inicial; ahora ponderamos por los tamaños reales de los grupos."),
+          P("El enunciado da N₀ = (136, 694, 1298, 1175, 578, 817, 304, 0), en orden Aaa, Aa, A, Baa, Ba, B, Caa-C, Default. Son 136 empresas Aaa, 694 Aa, etc., y suman 5.002."),
+          formula("Nₙ = N₀Pⁿ;    [Nₙ]D = defaults esperados acumulados hasta n"),
+          P("Nₙ contiene el número esperado en cada estado. Default es absorbente, por lo que incluye también a quienes llegaron antes. En el primer año cada grupo aporta su tamaño por su PD anual:"),
+          formula("[N₀P]D = Σᵢ N₀,ᵢ Pᵢ,D = 113,12 compañías esperadas"),
+          P("113,12 es una esperanza, no un conteo observado: cualquier realización tiene un número entero de defaults. Para aislar los que ocurren durante n, aplicamos la diferencia de acumulados de 1.a:"),
+          formula("dₙ = [N₀Pⁿ]D − [N₀Pⁿ⁻¹]D = Σᵢ N₀,ᵢ [Fᵢ(n) − Fᵢ(n−1)]"),
+          P("La proporción esperada de default exacto es dₙ/5002. El notebook calcula proporciones con p₀ = N₀/5002 y las multiplica por 5.002 para recuperar conteos esperados. Sumar esperanzas no exige independencia entre compañías."),
           data_table([
               ["Métrica", "Valor", "Interpretación"],
               ["Default exacto 1Y", "2,2614%", "113,12 compañías esperadas"],
@@ -334,14 +350,17 @@ def build_story():
           figure(f1 / "grafico_1b_cohorte_default.png", "Figura 2. Default esperado por año para la cohorte inicial.", max_h=10.6*cm)]
 
     new_chapter(S, "7. Ejercicio 1.c - distribución a 25 años")
-    S += [P("Para cada rating inicial, la fila correspondiente de P²⁵ da la distribución completa a 25 años. La comprobación simula cadenas discretas y compara frecuencias con esa referencia analítica."),
-          formula("Distribución analítica a 25Y desde i = fila i de P²⁵"),
-          bullet("Simulación principal: 300.000 compañías por rating inicial."),
-          bullet("Las 56 celdas no absorbentes se comparan tanto en error absoluto como en error dividido por su error estándar."),
-          bullet("Resultado: error absoluto máximo 0,001486 y máximo |z| = 2,41, por debajo del umbral de 4 errores estándar."),
-          figure(f1 / "grafico_1c_distribucion_25y_validacion.png", "Figura 3. P²⁵ analítica y error estandarizado de la simulación.", max_h=11.2*cm),
-          callout("Por qué se estandariza",
-                  "Un error absoluto no tiene el mismo significado para una probabilidad de 0,50 que para una de 0,0001. Dividir por el error estándar permite juzgar la discrepancia en su escala estadística.", LIGHT_BLUE)]
+    S += [P("Elegimos una empresa uniformemente entre las 5.002. Antes de observar su rating, X₀ es aleatorio; Xₙ indica su estado al terminar el año n. Su distribución inicial es p₀ = N₀/5002 (también llamada π₀): Pr(X₀ = A) = 1298/5002."),
+          formula("Pr(X₂₅ = j) = [p₀P²⁵]ⱼ = Σᵢ p₀,ᵢ (P²⁵)ᵢⱼ"),
+          P("Esta es la distribución no condicionada al rating inicial. El enunciado también pide los distintos niveles de partida: si conocemos X₀ = i, usamos su fila de P²⁵."),
+          formula("Pr(X₂₅ = j | X₀ = i) = (P²⁵)ᵢⱼ"),
+          P("P²⁵ reúne distribuciones condicionadas; p₀P²⁵ es una única distribución ponderada por la cohorte. Ambas tablas completas se conservan en el notebook y la memoria unificada. La PD no condicionada a 25 años es 54,1342 %, coherente con 1.b."),
+          P("Ejemplo ilustrativo: 80 % de empresas A y 20 % B, con PD del 10 % y 50 %, dan una PD aleatoria del 18 %: 0,8×0,10 + 0,2×0,50. Si sabemos que empieza en A, la PD es 10 %."),
+          H2("Cómo se simula"),
+          P("1. Sin condicionar, sortear X₀ con p₀; condicionando, fijar X₀ = i. 2. Sortear X₁ con la fila de X₀, X₂ con la fila de X₁ y continuar hasta X₂₅; Default permanece absorbente. 3. Repetir: las frecuencias aproximan p₀P²⁵ o la fila i de P²⁵, respectivamente."),
+          P("El notebook simula 300.000 trayectorias por rating y luego pondera sus frecuencias con p₀. La mezcla estima la distribución no condicionada, pero no es una segunda simulación con X₀ sorteado."),
+          P("En las 56 celdas de los siete ratings iniciales, el error absoluto máximo es 0,001486 y el máximo |z| es 2,41, bajo el umbral de 4 errores estándar. Para una frecuencia condicionada, SE = √[p(1−p)/300.000]: compara el error Monte Carlo con su escala; no exige igualdad exacta."),
+          figure(f1 / "grafico_1c_distribucion_25y_validacion.png", "Figura 3. P²⁵ analítica y error estandarizado de la simulación.", max_h=8.0*cm)]
 
     new_chapter(S, "8. Ejercicio 2.a - cociente de dos difusiones")
     S += [P("Se busca el valor de μ que hace martingala a Yₜ=Xₜ/Nₜ. Como ambos procesos dependen de brownianos correlacionados, la covariación no puede omitirse."),
@@ -478,17 +497,17 @@ def build_story():
                   "No quedan hallazgos que bloqueen la entrega. El único riesgo residual material es la convención explícita del bucket Caa-C, autorizada por la profesora.", GREEN)]
 
     new_chapter(S, "18. Reproducción y mapa de archivos")
-    S += [P("Desde la raíz del repositorio se crea un entorno, se instalan las dependencias y se ejecutan los notebooks. Los adjuntos originales se colocan localmente en procesos-estocasticos/0-enunciado y no se publican por ser fuentes suministradas al grupo."),
+    S += [P("Desde la raíz del repositorio se crea un entorno, se instalan las dependencias y se ejecutan los notebooks. Los adjuntos originales se colocan en la carpeta 0-enunciado de la Entrega 2; no se publican por ser fuentes suministradas al grupo."),
           formula("python -m venv .venv   →   pip install -r requirements.txt"),
           formula("jupyter nbconvert --to notebook --execute --inplace &lt;notebook.ipynb&gt;"),
           data_table([
-              ["Ruta", "Contenido"],
-              ["procesos-estocasticos/1-cadenas-markov-ratings", "Notebook, HTML y 3 figuras"],
-              ["procesos-estocasticos/2-ito-martingalas", "Notebook, HTML, Excel y 4 figuras"],
-              ["procesos-estocasticos/3-volatilidad-determinista-asiatica", "Notebook, HTML y 2 figuras"],
-              ["procesos-estocasticos/AUDITORIA.md", "Evidencia y veredicto independiente"],
-              ["procesos-estocasticos/memoria", "Este PDF"],
-              ["tools/nb_to_html.py", "Conversión HTML offline con MathML"],
+              ["Ruta dentro de la Entrega 2", "Contenido"],
+              ["1-cadenas-markov-ratings/", "Notebook del ejercicio 1"],
+              ["2-ito-martingalas/", "Notebook del ejercicio 2"],
+              ["3-volatilidad-determinista-asiatica/", "Notebook del ejercicio 3"],
+              ["AUDITORIA.md", "Evidencia y veredicto independiente"],
+              ["output/", "Memorias, reportes, Excel y figuras de los tres ejercicios"],
+              ["../tools/nb_to_html.py", "Herramienta compartida de conversión HTML offline"],
           ], widths=[8.2*cm, 8.6*cm]),
           H2("Qué revisar antes de entregar"),
           bullet("Abrir los tres HTML sin red y comprobar fórmulas y gráficos."),

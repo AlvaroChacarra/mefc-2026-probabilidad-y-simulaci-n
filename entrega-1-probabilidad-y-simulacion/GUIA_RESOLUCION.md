@@ -23,8 +23,8 @@ Dentro de cada carpeta `N-nombre-ejercicio/`:
 | **Gráficos** | `resultados/grafico_*.png` | Figuras guardadas, también embebidas en el HTML |
 
 No se usan scripts `.py` sueltos para la resolución: **el notebook es el
-entregable**. El único `.py` del repositorio es la herramienta de build
-`tools/nb_to_html.py` (infraestructura, no solución).
+entregable**. La herramienta compartida `tools/nb_to_html.py` genera los reportes
+(infraestructura, no solución). Los comandos de esta guía se ejecutan desde la raíz del repositorio.
 
 ---
 
