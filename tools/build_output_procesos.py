@@ -2,7 +2,8 @@
 """Memoria editorial única: HTML offline y PDF desde los mismos bloques.
 
 Requiere numpy, scipy, openpyxl (solo lectura), matplotlib, reportlab y
-latex2mathml. Los adjuntos originales permanecen fuera del control de versiones.
+latex2mathml. El HTML final usa además Node/MathJax (npm ci --prefix tools).
+Los adjuntos originales permanecen fuera del control de versiones.
 """
 from pathlib import Path
 from io import BytesIO

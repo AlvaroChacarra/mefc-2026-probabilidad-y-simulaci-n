@@ -107,6 +107,8 @@ def refresh(path=None):
         for child in list(body.contents):
             section.append(child)
     path.write_text(str(soup), encoding='utf-8')
+    from style_mobile_html import apply_style
+    apply_style(path)
     print(f'Explicaciones sincronizadas: {path}')
 
 

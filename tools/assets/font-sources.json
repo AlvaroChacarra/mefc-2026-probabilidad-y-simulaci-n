@@ -1,0 +1,17 @@
+[
+  {
+    "file": "BentonSansBBVA-Book.woff2",
+    "source": "https://www.bbva.com/wp-content/themes/coronita-bbvacom/assets/fonts/BentonSans/BentonSansBBVA-Book.woff2",
+    "sha256": "5ad9905e946ca98b15a519996a8f675f31a421ed56a526a4212a8af6b4e79432"
+  },
+  {
+    "file": "BentonSansBBVA-Medium.woff2",
+    "source": "https://www.bbva.com/wp-content/themes/coronita-bbvacom/assets/fonts/BentonSans/BentonSansBBVA-Medium.woff2",
+    "sha256": "c22b599398a1008cfff047a39d1aca99d8124e6fd3973c68aa6c246504fcfb62"
+  },
+  {
+    "file": "BentonSansBBVA-Bold.woff2",
+    "source": "https://www.bbva.com/wp-content/themes/coronita-bbvacom/assets/fonts/BentonSans/BentonSansBBVA-Bold.woff2",
+    "sha256": "2a316c5ee76b98cb86cae648e3f33f3f6f424ecc0dc0afa714f5e17e699e7fe8"
+  }
+]

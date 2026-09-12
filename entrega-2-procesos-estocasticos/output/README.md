@@ -9,6 +9,16 @@ Para sincronizar el HTML conjunto después de editar las explicaciones de los
 notebooks: `python tools/refresh_explanations_procesos.py` desde la raíz del repo.
 Los reportes individuales se regeneran con `tools/nb_to_html.py`.
 
+Los HTML incorporan Benton Sans BBVA, una paleta azul y ecuaciones SVG ya
+compuestas, con el MathML original conservado para accesibilidad. Funcionan sin
+red ni JavaScript y no incluyen logotipo. Las ecuaciones largas se distribuyen
+en varias líneas cuando se puede preservar su estructura; las restantes tienen
+desplazamiento local. Los cálculos y los notebooks no cambian.
+
+Antes de regenerar: `npm ci --prefix tools`. El renderizador se ejecuta solo al
+construir los archivos. Para aplicar el diseño a un HTML existente:
+`python tools/style_mobile_html.py entrega-2-procesos-estocasticos/output/main.html`.
+
 | Material | Uso |
 |---|---|
 | [main.html](main.html) | Documento unificado de los tres ejercicios, lectura vertical y offline |

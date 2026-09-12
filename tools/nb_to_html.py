@@ -6,8 +6,10 @@ de forma 100% offline (sin depender de ningún CDN de MathJax).
 El HTML estándar de `jupyter nbconvert` deja las fórmulas LaTeX como texto y
 confía en cargar MathJax desde un CDN en tiempo de visualización. Si el lector
 abre el archivo sin internet (o el CDN está bloqueado/caído), las fórmulas no se
-renderizan. Para un entregable autocontenido convertimos el LaTeX a MathML
-nativo, que cualquier navegador moderno (Chrome/Edge/Firefox) pinta sin JS ni red.
+renderizan. Convertimos LaTeX a MathML semántico y, al finalizar, a SVG visible
+con style_mobile_html.py. El documento conserva MathML para accesibilidad y
+no depende de su soporte visual en Safari, WebViews o visores de archivos.
+Requiere preparar el renderizador una vez: npm ci --prefix tools.
 
 Uso:
     python tools/nb_to_html.py <notebook.ipynb> <salida.html>
@@ -157,6 +159,8 @@ def main():
     html = str(soup)
     salida.parent.mkdir(parents=True, exist_ok=True)
     salida.write_text(html, encoding="utf-8")
+    from style_mobile_html import apply_style
+    apply_style(salida)
     print(f"✓ Reporte offline escrito en {salida}")
 
 
