@@ -312,6 +312,7 @@ def build_story():
     new_chapter(S, "5. Ejercicio 1.a - default acumulado y primer default")
     S += [P("Sea P la matriz de transición y D el estado Default. La probabilidad acumulada de estar en default en el año n, partiendo del rating i, es el elemento (i,D) de P elevada a n."),
           formula("Fᵢ(n) = (Pⁿ)ᵢ,D"),
+          P('Por qué Pⁿ suma todos los caminos. Cada camino tiene como probabilidad el producto de sus transiciones: (P²)ᵢD = Σⱼ Pᵢⱼ PⱼD; (P³)ᵢD = Σⱼ Σₖ Pᵢⱼ Pⱼₖ PₖD. Las sumas recorren todos los estados intermedios, incluido D: P³ = P²P añade un paso a cada camino de dos años. En general, (Pⁿ)ᵢⱼ suma todos los caminos de i a j en n transiciones. Ejemplo ilustrativo, distinto del dato del ejercicio: con orden A, B, D y filas de P (0.7, 0.2, 0.1), (0.1, 0.6, 0.3), (0, 0, 1), (P²)AD = 0.7×0.1 + 0.2×0.3 + 0.1×1 = 0.23. Son A→A→D, A→B→D y A→D→D. Como PDD = 1, el último camino conserva el default previo: (Pⁿ)ᵢD = Pr(τᵢ ≤ n), donde τᵢ es el año del primer default.', "Smallx"),
           P("La probabilidad de hacer default por primera vez exactamente en el año n es el incremento de la probabilidad acumulada, porque Default es absorbente."),
           formula("fᵢ(n) = Fᵢ(n) - Fᵢ(n-1),   con Fᵢ(0)=0"),
           H2("Lectura económica"),

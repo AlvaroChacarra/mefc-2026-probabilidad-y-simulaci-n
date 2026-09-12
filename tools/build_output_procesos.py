@@ -134,6 +134,7 @@ p(b0,'La matriz anual P indica cómo puede cambiar el rating en un año. Su elem
 p(b0,'Default es absorbente: una compañía que ha llegado a él permanece allí. Por eso, estar en default en el año n equivale a haber hecho default en algún momento hasta ese año.')
 eq(b0,r'F_i(n)=(P^n)_{iD},\qquad n=1,\ldots,25','Probabilidad acumulada de default desde el rating i en el año n.')
 p(b0,'D identifica Default; i identifica el rating inicial. La potencia Pⁿ encadena n transiciones anuales. Para un rating inicialmente solvente fijamos Fᵢ(0) = 0.')
+note(b0,'Por qué Pⁿ suma todos los caminos. Cada camino tiene como probabilidad el producto de sus transiciones: (P²)ᵢD = Σⱼ Pᵢⱼ PⱼD; (P³)ᵢD = Σⱼ Σₖ Pᵢⱼ Pⱼₖ PₖD. Las sumas recorren todos los estados intermedios, incluido D: P³ = P²P añade un paso a cada camino de dos años. En general, (Pⁿ)ᵢⱼ suma todos los caminos de i a j en n transiciones. Ejemplo ilustrativo, distinto del dato del ejercicio: con orden A, B, D y filas de P (0.7, 0.2, 0.1), (0.1, 0.6, 0.3), (0, 0, 1), (P²)AD = 0.7×0.1 + 0.2×0.3 + 0.1×1 = 0.23. Son A→A→D, A→B→D y A→D→D. Como PDD = 1, el último camino conserva el default previo: (Pⁿ)ᵢD = Pr(τᵢ ≤ n), donde τᵢ es el año del primer default.')
 p(b0,'Para obtener el primer default en un año concreto restamos el acumulado del año anterior:')
 eq(b0,r'f_i(n)=F_i(n)-F_i(n-1)','Probabilidad de primer default exactamente en el año n.')
 table(b0,['Rating inicial','Default en 1 año','Acumulado a 25 años'],[[r,pct(F[0,i]) if F[0,i]>=1e-6 else f'{100*F[0,i]:.3e} %',pct(F[-1,i])]for i,r in enumerate(RATINGS)])
