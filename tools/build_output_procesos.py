@@ -398,6 +398,8 @@ for i,(title,kicker,blocks) in enumerate(pages):
     html.append('</section>')
 html.append('<footer>MEFC 2026 · Procesos estocásticos · Fin de la memoria</footer></main></body></html>')
 (OUT/'main.html').write_text('\n'.join(html),encoding='utf-8')
+from refresh_explanations_procesos import refresh
+refresh(OUT/'main.html')
 def footer(canvas,doc):
     canvas.saveState();canvas.setFont('Body',7.5);canvas.setFillColor(HexColor('#596b65'))
     canvas.drawString(54,28,'MEFC 2026 · Procesos estocásticos')
