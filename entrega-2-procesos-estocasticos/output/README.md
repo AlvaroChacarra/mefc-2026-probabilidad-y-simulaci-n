@@ -1,44 +1,54 @@
 # Outputs · Entrega 2
 
-La edición ampliada de los ejercicios 2 y 3 está en `main.html`, sus reportes HTML
-y los notebooks. Incluye las derivaciones paso a paso y explicita los supuestos
-de martingala y selección de la curva de volatilidad. Los dos PDF conservan su
-formato resumido, con la misma continuidad pedagógica actualizada en 2.c y 3.
+Los **tres notebooks son la fuente de contenido**. Cada reporte HTML reproduce
+todas sus celdas Markdown, tablas, resultados y figuras; `main.html` reúne los
+tres reportes en el mismo orden. El código se puede desplegar, pero las gráficas
+y los resultados permanecen visibles. No se transcriben resultados a mano.
 
-Para sincronizar el HTML conjunto después de editar las explicaciones de los
-notebooks: `python tools/refresh_explanations_procesos.py` desde la raíz del repo.
-Los reportes individuales se regeneran con `tools/nb_to_html.py`.
+## Reconstruir y comprobar
 
-Los HTML incorporan Benton Sans BBVA, una paleta azul y ecuaciones SVG ya
-compuestas, con el MathML original conservado para accesibilidad. Funcionan sin
-red ni JavaScript y no incluyen logotipo. Las ecuaciones largas se distribuyen
-en varias líneas cuando se puede preservar su estructura; las restantes tienen
-desplazamiento local. La revisión pedagógica modifica solo el texto de los
-notebooks: conserva todas las celdas de código, sus resultados y las semillas.
+Después de editar y ejecutar los notebooks, desde la raíz del repositorio:
 
-Antes de regenerar: `npm ci --prefix tools`. El renderizador se ejecuta solo al
-construir los archivos. Para aplicar el diseño a un HTML existente:
-`python tools/style_mobile_html.py entrega-2-procesos-estocasticos/output/main.html`.
+```bash
+npm ci --prefix tools
+python tools/build_notebooks_procesos.py
+python tools/build_notebooks_procesos.py --check
+```
 
-Para reconstruir también los PDF desde los datos ya entregados, sin los adjuntos
-originales: `python tools/build_output_procesos.py --matriz-operativa` y
-`python tools/build_memoria_procesos.py --matriz-operativa`. El primer comando
-regenera y sincroniza `main.html`; los reportes individuales se reconstruyen
-por separado con `tools/nb_to_html.py`. Las explicaciones resumidas de los PDF
-se mantienen en esos dos constructores.
+La primera orden prepara el renderizador ya utilizado por el proyecto. La
+construcción genera los cuatro HTML. El control verifica el número de celdas,
+el orden de las fórmulas, las tablas numéricas y las imágenes, además de la
+igualdad de contenido entre cada reporte y su sección del HTML conjunto.
+También detecta notebooks con errores y enlaces internos rotos.
 
-| Material | Uso |
+El comando anterior `python tools/refresh_explanations_procesos.py` sigue
+funcionando: ahora reconstruye el contenido completo, no una selección de texto.
+
+## Materiales
+
+| Material | Contenido |
 |---|---|
-| [main.html](main.html) | Documento unificado de los tres ejercicios, lectura vertical y offline |
-| [procesos_estocasticos.pdf](procesos_estocasticos.pdf) | Mismo documento en PDF, 16 páginas |
-| [procesos_estocasticos.xlsx](procesos_estocasticos.xlsx) | Libro que reproduce los resultados de la entrega |
-| [ejercicio2_simulacion_Mt.xlsx](ejercicio-2/ejercicio2_simulacion_Mt.xlsx) | Hoja de simulación solicitada en 2.c |
-| [memoria_detallada.pdf](memoria_detallada.pdf) | Memoria complementaria de decisiones y controles, 22 páginas |
+| [main.html](main.html) | Los tres ejercicios completos, offline y con 10 figuras |
+| [Ejercicio 1](ejercicio-1/ejercicio1_reporte.html) | Markov: 3 figuras |
+| [Ejercicio 2](ejercicio-2/ejercicio2_reporte.html) | Itô: 5 figuras, incluida la muestra del Excel |
+| [Ejercicio 3](ejercicio-3/ejercicio3_reporte.html) | Volatilidad y asiática: 2 figuras |
+| [procesos_estocasticos.xlsx](procesos_estocasticos.xlsx) | Libro de resultados |
+| [ejercicio2_simulacion_Mt.xlsx](ejercicio-2/ejercicio2_simulacion_Mt.xlsx) | Trayectoria y 5.000 réplicas de 2.c |
 
-Los reportes y gráficos por ejercicio se agrupan en:
+Los PNG por ejercicio son las mismas figuras guardadas al ejecutar el notebook.
+Los HTML incorporan Benton Sans BBVA, colores azules y fórmulas SVG con MathML
+semántico: no requieren conexión ni JavaScript y no llevan logotipo.
 
-- [ejercicio-1/](ejercicio-1/): [reporte de ratings](ejercicio-1/ejercicio1_reporte.html) y tres figuras.
-- [ejercicio-2/](ejercicio-2/): [reporte de Itô](ejercicio-2/ejercicio2_reporte.html), simulación Excel y cuatro figuras.
-- [ejercicio-3/](ejercicio-3/): [reporte de volatilidad y asiática](ejercicio-3/ejercicio3_reporte.html) y dos figuras.
+## Alcance de esta edición
 
-Para regenerar, consulta las [instrucciones de la entrega](../README.md#reproducir). Los notebooks están en sus carpetas de ejercicio; aquí se reúnen las salidas.
+Se mantienen cálculos, semillas y resultados anteriores. Cambia la explicación
+y la presentación de las gráficas; se añade la lectura del Excel de 2.c sin
+generar otra muestra. Los paneles se apilan y la cohorte deja de utilizar doble
+eje. Los reportes se verifican también a anchuras de móvil.
+
+Los PDF [procesos_estocasticos.pdf](procesos_estocasticos.pdf) (16 páginas) y
+[memoria_detallada.pdf](memoria_detallada.pdf) (22 páginas) conservan la edición
+resumida previa. No son una exportación completa de los notebooks de esta
+edición, ni se han regenerado en esta revisión de notebooks y HTML.
+
+Para ejecutar los notebooks, consulta [Reproducir](../README.md#reproducir).
