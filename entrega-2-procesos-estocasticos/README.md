@@ -11,7 +11,7 @@ Tres ejercicios separados; todos los entregables están en [output/](output/READ
 
 ## Qué entregar
 
-La [memoria unificada HTML](output/main.html) y su [PDF](output/procesos_estocasticos.pdf) desarrollan los tres ejercicios, con anexos numéricos completos. Añade el [Excel de resultados](output/procesos_estocasticos.xlsx) y el [Excel de simulación del apartado 2.c](output/ejercicio-2/ejercicio2_simulacion_Mt.xlsx). La [memoria detallada](output/memoria_detallada.pdf) conserva la explicación adicional de decisiones y controles.
+La [memoria unificada HTML](output/main.html) reproduce los tres notebooks completos: explicaciones, tablas y diez figuras, sin omitir sus salidas. Añade el [Excel de resultados](output/procesos_estocasticos.xlsx) y el [Excel de simulación del apartado 2.c](output/ejercicio-2/ejercicio2_simulacion_Mt.xlsx). Los PDF conservan la edición resumida previa, no una exportación íntegra de los notebooks actuales.
 
 ## Resultados y convenciones
 
@@ -20,7 +20,7 @@ La [memoria unificada HTML](output/main.html) y su [PDF](output/procesos_estocas
 - **Itô:** μ = σρ − 1/2; Iₜ = Wₜ³/3 − tWₜ; E[Mₜ] = 0 y Var(Mₜ) = 2t⁶/9. El Excel obtiene media 0,008262, varianza 0,224584 e IC 95 % [−0,004874; 0,021398].
 - **Opciones:** volatilidad no negativa en [0,2], con a = 0,049958717, b = 0,200094752 y c = 0,099881280. Asiática: 13,621805; IC 95 % RQMC [13,621644; 13,621966]. La raíz que cruza por cero queda excluida.
 
-La [auditoría](AUDITORIA.md) conserva la revisión numérica original. La edición pedagógica posterior mantiene los cálculos y las salidas guardadas de los notebooks; solo cambia las explicaciones de 1.a–1.c y las rutas de salida.
+La [auditoría](AUDITORIA.md) conserva la revisión numérica original. La edición pedagógica mantiene cálculos y semillas; la reejecución reproduce las tablas y salidas de texto previas. Cambian el Markdown y las gráficas, y se añade la lectura de las 5.000 réplicas del Excel para contrastar esa misma muestra.
 
 ## Reproducir
 
@@ -36,6 +36,18 @@ python tools/nb_to_html.py \
 ```
 
 Cada notebook guarda sus resultados en `../output/ejercicio-N/`. Las semillas están fijadas. Si Jupyter no puede abrir sockets, puede utilizarse `tools/execute_notebook_inprocess.py`.
+
+Después de ejecutar los tres notebooks, reconstruir y comprobar todos los HTML:
+
+```bash
+npm ci --prefix tools
+python tools/build_notebooks_procesos.py
+python tools/build_notebooks_procesos.py --check
+```
+
+Los notebooks son la única fuente del texto, las tablas y las figuras del HTML.
+El control impide publicar una exportación que omita celdas o gráficas. El código
+queda plegado para la lectura, sin ocultar los resultados.
 
 Para regenerar las dos memorias a partir de la **matriz operativa con toda su precisión** ya contenida en el Excel entregado:
 
