@@ -40,10 +40,10 @@ parser.add_argument("--matriz-operativa", action="store_true",
                     help="Usar la matriz corregida del Excel entregado en lugar del adjunto original.")
 args = parser.parse_args()
 
-NAVY = colors.HexColor("#17365D")
-BLUE = colors.HexColor("#2F75B5")
-LIGHT_BLUE = colors.HexColor("#D9EAF7")
-GREEN = colors.HexColor("#E2F0D9")
+NAVY = colors.HexColor("#070E46")
+BLUE = colors.HexColor("#001391")
+LIGHT_BLUE = colors.HexColor("#F0F6FF")
+GREEN = colors.HexColor("#EAF2FF")
 GOLD = colors.HexColor("#FFF2CC")
 LIGHT = colors.HexColor("#F3F6F9")
 GRAY = colors.HexColor("#475569")
@@ -384,22 +384,28 @@ def build_story():
           figure(f2 / "grafico_2b_integral_ito.png", "Figura 5. Convergencia de sumas discretas hacia la expresión cerrada.", max_h=10.0*cm)]
 
     new_chapter(S, "10. Ejercicio 2.c - martingala cuadrática")
-    S += [P("Definimos Aₜ=∫₀ᵗs dWₛ. Es gaussiana centrada y su variación cuadrática determinista es q(t)=∫₀ᵗs²ds=t³/3."),
-          formula("Mₜ = Aₜ² - q(t) = (∫₀ᵗs dWₛ)² - t³/3"),
-          H2("Primera demostración: fórmula de Itô"),
-          P("Como dAₜ=t dWₜ y d⟨A⟩ₜ=t²dt, la fórmula de Itô da d(Aₜ²)=2Aₜt dWₜ+t²dt. Restar dq(t)=t²dt elimina el drift."),
+    S += [P("Definimos Aₜ=∫₀ᵗs dWₛ. Esta integral de Itô es una martingala centrada y, por tener integrando determinista, es gaussiana. Su varianza crece: E[Aₜ²]=Var(Aₜ)=∫₀ᵗs²ds=t³/3."),
+          P("Aₜ² ya no es martingala: su esperanza aumenta. Restar t³/3 significa quitarle exactamente ese crecimiento esperado. Esta intuición explica la construcción, pero tener media cero no demuestra por sí solo la propiedad de martingala."),
+          formula("qₜ := t³/3 = E[Aₜ²] = ⟨A⟩ₜ,     Mₜ = Aₜ² - qₜ"),
+          P("Aquí la variación cuadrática es determinista y coincide con la varianza. El enunciado pide describir dos vías y desarrollar una: elegimos Itô."),
+          H2("Método principal: fórmula de Itô"),
+          P("Como dAₜ=t dWₜ, aplicamos f(a)=a², con f′(a)=2a y f″(a)=2. Itô da d(Aₜ²)=2Aₜ dAₜ+d⟨A⟩ₜ. Sustituir d⟨A⟩ₜ=t²dt produce d(Aₜ²)=2tAₜ dWₜ+t²dt."),
+          P("Por otro lado, d(t³/3)=t²dt. Esa compensación está construida exactamente para cancelar la deriva introducida al cuadrar Aₜ. Al restar:"),
           formula("dMₜ = 2tAₜ dWₜ"),
-          H2("Segunda demostración: esperanza condicional"),
-          P("Para s&lt;t, Aₜ=Aₛ+(Aₜ-Aₛ), y el incremento es independiente de la información hasta s, con varianza q(t)-q(s). Al expandir el cuadrado, E[Mₜ|Fₛ]=Mₛ."),
+          P("M₀=0 permite escribir Mₜ=∫₀ᵗ2sAₛ dWₛ. El integrando es adaptado y continuo; además E[∫₀ᵀ(2sAₛ)²ds]=4∫₀ᵀs²(s³/3)ds=2T⁶/9&lt;∞. Por tanto, es una martingala cuadrado integrable, no solo local."),
+          P("<b>Alternativa breve: esperanza condicional.</b> Para s&lt;t, Aₜ=Aₛ+∫ₛᵗu dWᵤ. El incremento futuro es independiente de Fₛ, tiene media cero y varianza (t³-s³)/3. Al expandir el cuadrado desaparece el término cruzado: E[Mₜ|Fₛ]=Aₛ²+(t³-s³)/3-t³/3=Mₛ. Además E[|Mₜ|]≤2qₜ&lt;∞."),
           H2("Distribución"),
-          formula("Mₜ = [t³/3]·(χ₁²-1),   E[Mₜ]=0,   Var(Mₜ)=2t⁶/9"),
-          P("El soporte es Mₜ≥-t³/3. La densidad tiene una singularidad integrable en el borde inferior; no es normal ni simétrica."),
+          P("En una fecha fija t&gt;0, Aₜ tiene ley N(0,t³/3): podemos representarla como √(t³/3) Z, con Z normal estándar. Su cuadrado tiene entonces la ley (t³/3)Z². Como U=Z² sigue χ₁², Mₜ tiene la misma distribución que (t³/3)(U-1). No es normal: hemos cuadrado una normal y la hemos desplazado para centrarla."),
+          formula("E[Mₜ]=qₜ(1-1)=0,   Var(Mₜ)=qₜ²·2=2t⁶/9"),
+          P("Usamos E[U]=1 y Var(U)=2. Restar una constante no cambia la varianza, pero la escala entra al cuadrado. El soporte es [−t³/3,∞). En t=1, la ley es (U-1)/3, la media es 0 y la varianza es 2/9; en t=0, M₀=0. La representación describe una fecha, no una única normal compartida por toda la trayectoria."),
           figure(f2 / "grafico_2c_distribucion_M1.png", "Figura 6. Ley teórica y simulación de M₁.", max_h=8.3*cm)]
 
     new_chapter(S, "11. Simulación del ejercicio 2.c y diseño del Excel")
-    S += [P("Para simular Aₜ sin error de discretización se usa su reloj cuadrático q(t)=t³/3. En una malla 0=t₀&lt;...&lt;tₙ, los incrementos son independientes y normales."),
-          formula("ΔAⱼ = √[q(tⱼ)-q(tⱼ₋₁)]·Zⱼ,   Zⱼ ~ N(0,1)"),
+    S += [P("Queremos contrastar en t=1 la media, varianza, forma y soporte teóricos. Muchas réplicas independientes sirven para comprobar esa distribución; una trayectoria sirve para ver la evolución temporal. El Excel separa ambas tareas."),
+          P("Para construir la trayectoria usamos qₜ=t³/3. En una malla 0=t₀&lt;...&lt;tₙ, los incrementos de A son normales independientes con varianza (tⱼ³-tⱼ₋₁³)/3."),
+          formula("ΔAⱼ = √[(tⱼ³-tⱼ₋₁³)/3]·Zⱼ,   Zⱼ ~ N(0,1)"),
           P("Esto no es Euler: es la distribución exacta de cada incremento de la integral gaussiana. El Excel conserva cada Zⱼ como dato fijo y calcula el resto mediante fórmulas."),
+          P("Se acumulan A y Mₜ=Aₜ²-t³/3 desde cero. Para las 5.000 réplicas terminales basta usar M₁=(Z²-1)/3, sin simular una trayectoria por réplica. Las discrepancias en los momentos se interpretan con el error muestral; el mínimo nunca puede ser menor que −1/3."),
           data_table([
               ["Hoja", "Contenido", "Qué permite auditar"],
               ["Resumen", "Parámetros, teoría, estimaciones e IC", "Coherencia estadística y soporte"],
@@ -418,32 +424,44 @@ def build_story():
           figure(f2 / "grafico_2c_trayectorias_martingala.png", "Figura 7. Trayectorias simuladas de Mₜ.", max_h=8.0*cm)]
 
     new_chapter(S, "12. Ejercicio 3.1 y 3.2 - modelo y fórmula europea")
-    S += [P("El activo satisface dSₜ=rSₜdt+σ(t)SₜdWₜ, con σ determinista. Aplicar Itô a log Sₜ integra exactamente la ecuación."),
+    S += [P("El hilo conductor es σ(t) → V(T) → precio de la call europea. Como σ es determinista, toda su influencia sobre la distribución terminal de S_T se resume en V(T)=∫₀ᵀσ²(s)ds. El activo satisface dSₜ=rSₜdt+σ(t)SₜdWₜ."),
+          H2("3.1. Verificar la solución propuesta"),
+          P("Queremos comprobar que la exponencial propuesta reproduce la SDE al aplicarle Itô. El término −V(t)/2 no es arbitrario: compensa la corrección de segundo orden de la exponencial para dejar exactamente la deriva rSₜdt."),
           formula("Sₜ = S₀ exp{rt - ½V(t) + ∫₀ᵗσ(s)dWₛ},   V(t)=∫₀ᵗσ²(s)ds"),
-          P("La integral es normal con media cero y varianza V(T). Por tanto, la fórmula de una call europea es Black-Scholes reemplazando σ√T por √V(T)."),
+          P("Llamamos Lₜ al exponente. Entonces dLₜ=(r−σ²(t)/2)dt+σ(t)dWₜ y d⟨L⟩ₜ=σ²(t)dt. Aplicando Itô, dSₜ=SₜdLₜ+½Sₜd⟨L⟩ₜ: se cancelan −½Sₜσ²(t)dt y +½Sₜσ²(t)dt, quedando la SDE original. L₀=0 verifica también el valor inicial."),
+          H2("3.2. De la distribución terminal a la call"),
+          P("Una europea depende solo de S_T. La integral del exponente es normal con media cero y varianza V(T); por eso log S_T es normal con media log S₀+rT−V(T)/2 y varianza V(T). Black-Scholes sigue siendo válida sustituyendo σ²T por V(T)."),
+          formula("σ<sub>ef</sub>(T) = √[V(T)/T]"),
+          P("La volatilidad efectiva no es σ(T), ni la media aritmética de σ(t): es la raíz de la media temporal de σ²(t). Con V(T)&gt;0, descontar E[(S_T−K)⁺] da:"),
           formula("C(T,K)=S₀Φ(d₁)-Ke⁻ʳᵀΦ(d₂)"),
           formula("d₁=[ln(S₀/K)+rT+½V(T)]/√V(T),   d₂=d₁-√V(T)"),
           P("Datos del PDF: S₀=100, K=100, r=1%, precios 9,55 a 1Y, 12,48 a 1,25Y y 23,36 a 2Y. Los precios están redondeados a dos decimales, de modo que no debe atribuirse precisión económica a los últimos dígitos calibrados.")]
 
     new_chapter(S, "13. Ejercicio 3.3 - calibración de σ(t)")
-    S += [P("Se impone σ(t)=at²+bt+c. Su varianza acumulada es un polinomio de grado cinco:"),
-          formula("V(t)=a²t⁵/5 + abt⁴/2 + (b²+2ac)t³/3 + bct² + c²t"),
-          P("Primero se invierte cada precio de call para obtener V(T). Después se resuelve el sistema no lineal V(Tⱼ)=Vⱼ con múltiples puntos iniciales. Aparecen cuatro raíces reales."),
+    S += [P("Tenemos tres precios y tres parámetros de σ(t)=at²+bt+c. Pero cada call observa V(T), no σ(T). La calibración sigue el recorrido: 3 calls → 3 varianzas acumuladas → 3 ecuaciones → (a,b,c)."),
+          H2("Paso 1: precio → varianza acumulada"),
+          P("Resolvemos C(Tⱼ,Vⱼ)=Cⱼ de mercado para cada vencimiento. La call es estrictamente creciente con V&gt;0: cada precio interior a las cotas de no arbitraje determina una única Vⱼ. El notebook verifica max(S₀−Ke⁻ʳᵀ,0)&lt;C&lt;S₀ y utiliza brentq, una búsqueda escalar acotada."),
           data_table([
               ["Vencimiento", "Precio", "V(T) implícita", "Vol. efectiva √(V/T)"],
               ["1,00", "9,55", "0,0521320003", "22,8324%"],
               ["1,25", "12,48", "0,0899877821", "26,8310%"],
               ["2,00", "23,36", "0,3292216020", "40,5723%"],
           ], widths=[3.5*cm, 3.2*cm, 4.8*cm, 5.3*cm]),
+          H2("Paso 2: varianzas → coeficientes"),
+          P("Imponemos que la integral de (as²+bs+c)² entre 0 y cada Tⱼ sea Vⱼ, para j=1,2,3. Son tres ecuaciones para tres parámetros: se ajustan varianzas integradas, no una parábola sobre volatilidades efectivas. Integrar el cuadrado da:"),
+          formula("V(t)=a²t⁵/5 + abt⁴/2 + (b²+2ac)t³/3 + bct² + c²t"),
+          P("La búsqueda desde múltiples puntos iniciales encuentra cuatro raíces: dos curvas y sus opuestas. Esto no prueba que sean todas las soluciones posibles. La elección no negativa es una convención adicional de modelización."),
           callout("Criterio de selección",
-                  "Se exige σ(t)≥0 para todo t∈[0,2]. Solo una raíz cumple la condición: a=0,049958716872, b=0,200094751620, c=0,099881280434.", GREEN),
+                  "Se exige σ(t)≥0 para todo t∈[0,2]. Solo una de las raíces encontradas cumple la condición: a=0,049958716872, b=0,200094751620, c=0,099881280434. Al ser positivos los tres coeficientes, σ(t)≥c>0 en todo el intervalo.", GREEN),
           figure(f3 / "grafico_3c_calibracion_volatilidad.png", "Figura 8. Curvas algebraicas calibradas y selección de la raíz no negativa.", max_h=9.5*cm),
           P("El error máximo de repricing de las tres calls es 2,13×10⁻¹⁴: el sistema numérico queda resuelto a precisión de máquina.")]
 
     new_chapter(S, "14. Ejercicio 3.4 - valoración de la call asiática")
-    S += [P("El payoff en T=2 es el positivo de la media aritmética de cuatro fijaciones menos K. Las fechas son 1,15; 1,30; 1,60 y 1,70 años."),
+    S += [P("Europea → S_T → fórmula analítica. Asiática aritmética → cuatro fijaciones → Monte Carlo. Necesitamos su distribución conjunta, no solo terminal; además, el promedio aritmético de lognormales no es, en general, lognormal. Por eso usamos simulación."),
+          P("El payoff en T=2 es el positivo de la media aritmética de cuatro fijaciones menos K. Las fechas son 1,15; 1,30; 1,60 y 1,70 años. Primero se promedian los precios y después se aplica la parte positiva; promediar cuatro payoffs de calls sería otro producto."),
           formula("Payoff = max{(S₁.₁₅+S₁.₃₀+S₁.₆₀+S₁.₇₀)/4 - 100, 0}"),
-          P("Como σ es determinista, el vector de integrales gaussianas tiene covarianza Cov(Xᵢ,Xⱼ)=V(min(tᵢ,tⱼ)). Una factorización de Cholesky produce las cuatro fijaciones sin discretizar la SDE."),
+          P("V(t) sigue guiando la simulación: el vector de integrales gaussianas tiene covarianza V(min(tᵢ,tⱼ)). El código acumula incrementos independientes √[V(tᵢ)−V(tᵢ₋₁)] Zᵢ. Compartir los incrementos previos conserva esa dependencia y produce las cuatro fijaciones exactas del modelo, sin error de discretización."),
+          P("Se convierte cada acumulado Yᵢ en Sₜᵢ=100 exp(0,01tᵢ−V(tᵢ)/2+Yᵢ). El pago se descuenta a T=2, no a la última fijación de 1,70 años. No hace falta simular S₂."),
           formula("Precio = e⁻ʳᵀ · E[Payoff]"),
           H2("Reducción de varianza"),
           bullet("RQMC Sobol con 32 aleatorizaciones independientes y 131.072 caminos por réplica."),

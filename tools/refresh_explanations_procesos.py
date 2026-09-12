@@ -34,7 +34,15 @@ def markdown_offline(source):
         equations.append(rendered)
         return f'EQUATIONPLACEHOLDER{len(equations)-1}END'
 
-    rendered = markdown2html(MATH.sub(protect, source))
+    # nbconvert replica el texto del título en id/href. Si ahí queda un
+    # placeholder, sustituirlo por MathML corrompe el atributo y filtra marcado
+    # a la página. La navegación de esta memoria usa los id de las secciones.
+    prepared = BeautifulSoup(markdown2html(MATH.sub(protect, source)), 'html.parser')
+    for anchor in prepared.select('.anchor-link'):
+        anchor.decompose()
+    for heading in prepared.select('h1,h2,h3,h4,h5,h6'):
+        heading.attrs.pop('id', None)
+    rendered = str(prepared)
     for index, equation in enumerate(equations):
         token = f'EQUATIONPLACEHOLDER{index}END'
         if equation.startswith('<div'):
