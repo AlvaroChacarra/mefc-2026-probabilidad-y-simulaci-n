@@ -16,6 +16,8 @@ import re
 import sys
 import subprocess
 import tempfile
+import os
+from urllib.parse import urlsplit
 from pathlib import Path
 
 import latex2mathml.converter as L2M
@@ -145,6 +147,14 @@ def main():
             check=True,
         )
         html = renderiza_math(tmp_html.read_text(encoding="utf-8"))
+    # Un enlace local del notebook debe apuntar al mismo archivo desde el HTML.
+    soup = BeautifulSoup(html, "html.parser")
+    for link in soup.find_all("a", href=True):
+        href = link["href"]
+        if href and not href.startswith("#") and not urlsplit(href).scheme:
+            target = (nb.parent / href).resolve()
+            link["href"] = os.path.relpath(target, salida.parent.resolve())
+    html = str(soup)
     salida.parent.mkdir(parents=True, exist_ok=True)
     salida.write_text(html, encoding="utf-8")
     print(f"✓ Reporte offline escrito en {salida}")
