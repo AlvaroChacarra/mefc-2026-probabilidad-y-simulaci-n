@@ -1,0 +1,28 @@
+name: tmp-fix-ejercicio3-symbol
+
+on:
+  push:
+    branches:
+      - docs/ejercicio-3-friendly-pedagogia
+
+permissions:
+  contents: write
+
+jobs:
+  fix-symbol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/ejercicio-3-friendly-pedagogia
+      - name: Fix remaining symbol
+        shell: bash
+        run: |
+          echo 'aW1wb3J0IGpzb24sIHBhdGhsaWIKcD1wYXRobGliLlBhdGgoImVudHJlZ2EtMi1wcm9jZXNvcy1lc3RvY2FzdGljb3MvMy12b2xhdGlsaWRhZC1kZXRlcm1pbmlzdGEtYXNpYXRpY2EvZWplcmNpY2lvM192b2xhdGlsaWRhZF9kZXRlcm1pbmlzdGFfYXNpYXRpY2EuaXB5bmIiKQpuYj1qc29uLmxvYWRzKHAucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpKQpjaGFuZ2VkPTAKZm9yIGMgaW4gbmJbImNlbGxzIl06CiAgICBpZiBjLmdldCgiY2VsbF90eXBlIikhPSJtYXJrZG93biI6CiAgICAgICAgY29udGludWUKICAgIHNyYz0iIi5qb2luKGMuZ2V0KCJzb3VyY2UiLFtdKSkKICAgIGlmICIjIyBBcGFydGFkbyAzLjEg4oCUIiBpbiBzcmM6CiAgICAgICAgbmV3PXNyYy5yZXBsYWNlKCIkTF8wPTAkIiwgIiRYXzA9MCQiKS5yZXBsYWNlKCIkU18wZV57TF8wfT1TXzAkIiwgIiRTXzBlXntYXzB9PVNfMCQiKQogICAgICAgIGNoYW5nZWQgKz0gaW50KG5ldyE9c3JjKQogICAgICAgIGNbInNvdXJjZSJdPW5ldy5zcGxpdGxpbmVzKGtlZXBlbmRzPVRydWUpCmFzc2VydCBjaGFuZ2VkPT0xLCBjaGFuZ2VkCm1kPSJcbiIuam9pbigiIi5qb2luKGMuZ2V0KCJzb3VyY2UiLFtdKSkgZm9yIGMgaW4gbmJbImNlbGxzIl0gaWYgYy5nZXQoImNlbGxfdHlwZSIpPT0ibWFya2Rvd24iKQpzZWM9bWQuc3BsaXQoIiMjIEFwYXJ0YWRvIDMuMSDigJQiLDEpWzFdLnNwbGl0KCIjIyBBcGFydGFkbyAzLjIg4oCUIiwxKVswXQphc3NlcnQgIkxfdCIgbm90IGluIHNlYyBhbmQgIkxfMCIgbm90IGluIHNlYwpwLndyaXRlX3RleHQoanNvbi5kdW1wcyhuYiwgZW5zdXJlX2FzY2lpPUZhbHNlLCBpbmRlbnQ9MSkrIlxuIixlbmNvZGluZz0idXRmLTgiKQo=' | base64 -d > /tmp/fix.py
+          python /tmp/fix.py
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm .github/workflows/tmp-fix-ejercicio3-symbol.yml
+          git add entrega-2-procesos-estocasticos/3-volatilidad-determinista-asiatica/ejercicio3_volatilidad_determinista_asiatica.ipynb .github/workflows/tmp-fix-ejercicio3-symbol.yml
+          git commit -m 'docs: usar X_t de forma consistente en 3.1 [skip ci]'
+          git push origin HEAD:docs/ejercicio-3-friendly-pedagogia
