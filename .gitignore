@@ -2,3 +2,6 @@
 tmp/
 __pycache__/
 *.py[cod]
+
+# Dependencias locales del renderizador HTML/PDF
+tools/node_modules/

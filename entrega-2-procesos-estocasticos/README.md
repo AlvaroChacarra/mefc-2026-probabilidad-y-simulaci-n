@@ -11,7 +11,7 @@ Tres ejercicios separados; todos los entregables están en [output/](output/READ
 
 ## Qué entregar
 
-La [memoria unificada HTML](output/main.html) reproduce los tres notebooks completos: explicaciones, tablas y diez figuras, sin omitir sus salidas. Añade el [Excel de resultados](output/procesos_estocasticos.xlsx) y el [Excel de simulación del apartado 2.c](output/ejercicio-2/ejercicio2_simulacion_Mt.xlsx). Los PDF conservan la edición resumida previa, no una exportación íntegra de los notebooks actuales.
+La [memoria unificada HTML](output/main.html) reproduce los tres notebooks completos: explicaciones, tablas y diez figuras, sin omitir sus salidas. Añade el [Excel de resultados](output/procesos_estocasticos.xlsx) y el [Excel de simulación del apartado 2.c](output/ejercicio-2/ejercicio2_simulacion_Mt.xlsx). Los dos PDF se exportan ahora desde esa misma memoria HTML completa; `memoria_detallada.pdf` se conserva como alias de `procesos_estocasticos.pdf`.
 
 ## Resultados y convenciones
 
@@ -49,14 +49,25 @@ Los notebooks son la única fuente del texto, las tablas y las figuras del HTML.
 El control impide publicar una exportación que omita celdas o gráficas. El código
 queda plegado para la lectura, sin ocultar los resultados.
 
-Para regenerar las dos memorias a partir de la **matriz operativa con toda su precisión** ya contenida en el Excel entregado:
+Para regenerar también los PDF completos desde los notebooks ya ejecutados:
 
 ```bash
-python tools/build_output_procesos.py --matriz-operativa
-python tools/build_memoria_procesos.py --matriz-operativa
+npx --prefix tools playwright install chromium
+python tools/build_notebooks_procesos.py --pdf
 ```
 
-La opción solo cambia la fuente de lectura de la matriz corregida; conserva los cálculos. Sin esa opción, los scripts leen `0-enunciado/matriz-ratings.xlsx`. El notebook del ejercicio 1 necesita ese original para auditar también la fila descartada: el Excel de resultados no sustituye esa auditoría de entrada.
+Puede indicarse un Chromium existente mediante `CHROMIUM_EXECUTABLE`. La
+exportación conserva la tipografía, los colores, las fórmulas y las figuras del
+HTML; adapta únicamente la paginación A4 y omite el código plegado. Los dos
+nombres históricos de PDF contienen la misma memoria para evitar divergencias.
+
+`build_output_procesos.py` y `build_memoria_procesos.py` son generadores de la
+edición resumida histórica: no deben usarse para publicar la edición actual.
+El flujo vigente es `build_notebooks_procesos.py --pdf`, cuya fuente son los
+notebooks, sin transcribir explicaciones ni resultados a otra plantilla.
+
+La [auditoría de 3.2–3.4](AUDITORIA_3_2_4.md) documenta el enunciado verificado,
+el trabajo paralelo de 3.1, las comprobaciones y la igualdad de resultados.
 
 Los originales de esta entrega no están versionados. [0-enunciado/README.md](0-enunciado/README.md) indica cuáles son y sus checksums. Los HTML, PDF y Excel se pueden consultar sin esos adjuntos.
 

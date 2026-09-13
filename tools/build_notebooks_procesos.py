@@ -145,5 +145,10 @@ def build(main_path=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true', help='Solo verificar la consistencia de salidas existentes')
+    parser.add_argument('--pdf', action='store_true', help='Exportar también los dos PDF desde main.html')
     args = parser.parse_args()
+    if args.check and args.pdf:
+        parser.error('--check y --pdf son acciones distintas')
     validate() if args.check else build()
+    if args.pdf:
+        subprocess.run(['node', str(ROOT / 'tools/build_notebooks_pdf.cjs')], check=True)
