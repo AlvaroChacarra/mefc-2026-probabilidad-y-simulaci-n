@@ -1,0 +1,300 @@
+name: tmp-update-ejercicio3-pedagogia
+
+on:
+  push:
+    branches:
+      - docs/ejercicio-3-friendly-pedagogia
+
+permissions:
+  contents: write
+
+jobs:
+  update-notebook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/ejercicio-3-friendly-pedagogia
+      - name: Refine pedagogical narrative
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, hashlib, pathlib, re
+
+          path = pathlib.Path('entrega-2-procesos-estocasticos/3-volatilidad-determinista-asiatica/ejercicio3_volatilidad_determinista_asiatica.ipynb')
+          nb = json.loads(path.read_text(encoding='utf-8'))
+
+          def cell_text(cell):
+              src = cell.get('source', '')
+              return ''.join(src) if isinstance(src, list) else src
+
+          def set_text(cell, text):
+              cell['source'] = text.splitlines(keepends=True)
+
+          before_code = [json.dumps(c, sort_keys=True, ensure_ascii=False) for c in nb['cells'] if c.get('cell_type') == 'code']
+          changed = []
+
+          # 0) Global map of Exercise 3, immediately before 3.1.
+          for i, c in enumerate(nb['cells']):
+              if c.get('cell_type') != 'markdown':
+                  continue
+              t = cell_text(c)
+              marker = '## Apartado 3.1 — Verificación de la solución explícita'
+              if marker in t and '### Mapa del ejercicio 3' not in t:
+                  map_txt = (
+                      '### Mapa del ejercicio 3\n\n'
+                      'Todo el ejercicio sigue una sola cadena de ideas:\n\n'
+                      '$$\\boxed{\\text{SDE}\\xrightarrow{3.1}S_t\\xrightarrow{3.2}C(T)'
+                      '\\xrightarrow{3.3}\\sigma(t)\\text{ calibrada}'
+                      '\\xrightarrow{3.4}C_{\\mathrm{asiática}}}$$\n\n'
+                      'Primero comprobamos la dinámica del precio. Después obtenemos su distribución terminal, '
+                      'usamos precios de mercado para recuperar la curva de volatilidad y, por último, utilizamos '
+                      'esa misma curva para valorar una opción que depende de varias fijaciones.\n\n---\n\n'
+                  )
+                  set_text(c, t.replace(marker, map_txt + marker, 1))
+                  changed.append('mapa')
+                  break
+
+          # 1) 3.1: use X_t and develop dX_t and quadratic variation step by step.
+          in31 = False
+          for c in nb['cells']:
+              if c.get('cell_type') != 'markdown':
+                  continue
+              t = cell_text(c)
+              if '## Apartado 3.1 —' in t:
+                  in31 = True
+              if '## Apartado 3.2 —' in t:
+                  in31 = False
+              if not in31:
+                  continue
+              t2 = t.replace('L_t', 'X_t').replace('L\\rangle', 'X\\rangle').replace('\\langle L', '\\langle X')
+              old_start = 'Así, $S_t=S_0e^{X_t}$. El exponente tiene dinámica'
+              if old_start in t2:
+                  start = t2.index(old_start)
+                  end_phrase = 'No aparece una derivada de $\\sigma(t)$: diferenciamos su integral, no un producto $\\sigma(t)W_t$.'
+                  end = t2.find(end_phrase, start)
+                  if end != -1:
+                      end += len(end_phrase)
+                      new = r'''Así, $S_t=S_0e^{X_t}$. La ventaja de introducir $X_t$ es que podemos trabajar en dos pasos: primero entendemos cómo cambia el exponente y después propagamos ese cambio a través de la exponencial usando Itô.
+
+Calculamos $dX_t$ **término a término**.
+
+Para la parte determinista,
+
+$$d(rt)=r\,dt.$$
+
+Por el teorema fundamental del cálculo,
+
+$$d\left(-\frac12\int_0^t\sigma^2(s)\,ds\right)
+=-\frac12\sigma^2(t)\,dt.$$
+
+Y, por definición de la integral de Itô,
+
+$$d\left(\int_0^t\sigma(s)\,dW_s\right)=\sigma(t)\,dW_t.$$
+
+Por tanto,
+
+$$\boxed{
+dX_t=
+\underbrace{\left(r-\frac12\sigma^2(t)\right)dt}_{\text{parte de variación finita}}
++
+\underbrace{\sigma(t)\,dW_t}_{\text{parte browniana}}
+}.$$
+
+Aquí $d(\cdot)$ representa el **diferencial del proceso**. No debe interpretarse como una derivada temporal clásica: las trayectorias brownianas son continuas, pero casi seguramente no son derivables.
+
+Ahora necesitamos la variación cuadrática de $X_t$. La forma más directa de ver de dónde sale es expandir formalmente el cuadrado del diferencial:
+
+$$
+(dX_t)^2=
+\left[
+\left(r-\frac12\sigma^2(t)\right)dt+
+\sigma(t)dW_t
+\right]^2.
+$$
+
+En cálculo de Itô usamos las reglas de orden
+
+$$
+(dt)^2=0,\qquad dt\,dW_t=0,\qquad (dW_t)^2=dt.
+$$
+
+Los términos que contienen $(dt)^2$ o $dt\,dW_t$ desaparecen. Solo sobrevive el cuadrado del término browniano:
+
+$$\boxed{d\langle X\rangle_t=\sigma^2(t)\,dt}.$$
+
+Esta notación resume la variación cuadrática acumulada por el ruido. No aparece una derivada de $\sigma(t)$: estamos diferenciando una integral, no el producto $\sigma(t)W_t$.'''
+                      t2 = t2[:start] + new + t2[end:]
+                      changed.append('3.1-desarrollo')
+              # Make the Itô cancellation explicit after the substitution if the formula is present.
+              key = '$$dS_t=S_t\\,dX_t+\\frac12S_t\\,d\\langle X\\rangle_t.$$'
+              if key in t2 and 'La cancelación clave es' not in t2:
+                  t2 = t2.replace(key, key + r'''
+
+Sustituimos ahora los dos diferenciales. La cancelación clave es exactamente
+
+$$
+-\frac12S_t\sigma^2(t)\,dt
++\frac12S_t\sigma^2(t)\,dt=0.
+$$
+
+Por eso la corrección $-\tfrac12\int_0^t\sigma^2(s)ds$ del exponente no era decorativa: compensa el término de segundo orden generado por Itô.''', 1)
+                  changed.append('3.1-cancelacion')
+              if t2 != t:
+                  set_text(c, t2)
+
+          # 2) 3.2: add compact checkpoints without increasing formalism.
+          in32 = False
+          for c in nb['cells']:
+              if c.get('cell_type') != 'markdown':
+                  continue
+              t = cell_text(c)
+              if '## Apartado 3.2 —' in t:
+                  in32 = True
+              if '## Apartado 3.3 —' in t:
+                  in32 = False
+              if not in32:
+                  continue
+              t2 = t
+              if '$I_T$ acumula los shocks hasta $T$.' in t2 and 'I_T\\text{ es el shock aleatorio}' not in t2:
+                  p = 'Toda la incertidumbre de $S_T$ está concentrada en esta variable; por eso debemos entender su distribución antes de valorar el payoff.'
+                  t2 = t2.replace(p, p + '\n\n$$\\boxed{I_T\\text{ es el shock aleatorio acumulado hasta }T}$$', 1)
+                  changed.append('3.2-checkpoint-shock')
+              if 'Esta es la **isometría de Itô**' in t2 and 'V(T)\\text{ es la varianza acumulada}' not in t2:
+                  p = '$V(T)$ es la **varianza acumulada del shock logarítmico**, no la varianza del precio $S_T$.'
+                  t2 = t2.replace(p, p + '\n\n$$\\boxed{V(T)\\text{ es la varianza acumulada de }I_T}$$', 1)
+                  changed.append('3.2-checkpoint-varianza')
+              if '### 6. De un shock normal a un precio lognormal' in t2 and 'I_T\\overset d=' not in t2:
+                  t2 = t2.replace('### 6. De un shock normal a un precio lognormal', '$$\\boxed{I_T\\overset d=\\sqrt{V(T)}\\,Z,\\qquad Z\\sim N(0,1)}$$\n\n### 6. De un shock normal a un precio lognormal', 1)
+                  changed.append('3.2-checkpoint-normal')
+              if '### 7. Del payoff futuro al precio actual' in t2 and 'S_T\\text{ es lognormal}' not in t2:
+                  t2 = t2.replace('### 7. Del payoff futuro al precio actual', '$$\\boxed{S_T\\text{ es lognormal}\\;\\Longrightarrow\\;\\text{podemos valorar la call}}$$\n\n### 7. Del payoff futuro al precio actual', 1)
+                  changed.append('3.2-checkpoint-lognormal')
+              # Frame the derivative wrt V as a technical bridge to 3.3 instead of another core step.
+              phrase = 'Intuitivamente, más varianza amplía la dispersión lognormal manteniendo $E[S_T]=S_0e^{rT}$.'
+              if phrase in t2 and '**Nota técnica para 3.3 — por qué podemos invertir precio y varianza.**' not in t2:
+                  t2 = t2.replace(phrase, '**Nota técnica para 3.3 — por qué podemos invertir precio y varianza.**\n\n' + phrase, 1)
+                  changed.append('3.2-nota-monotonia')
+              if t2 != t:
+                  set_text(c, t2)
+
+          # 3) 3.3: separate the mathematical calibration from numerical robustness.
+          in33 = False
+          first33 = True
+          for c in nb['cells']:
+              if c.get('cell_type') != 'markdown':
+                  continue
+              t = cell_text(c)
+              if '## Apartado 3.3 —' in t:
+                  in33 = True
+              if '## Apartado 3.4 —' in t:
+                  in33 = False
+              if not in33:
+                  continue
+              t2 = t
+              if first33 and '## Apartado 3.3 —' in t2 and '### Antes de calcular: qué estamos calibrando' not in t2:
+                  pos = t2.find('\n', t2.find('## Apartado 3.3 —')) + 1
+                  intro = r'''
+### Antes de calcular: qué estamos calibrando
+
+La lógica del apartado es más sencilla que el algoritmo numérico que utilizaremos después:
+
+$$
+\boxed{
+(C_1,C_2,C_3)
+\;\longrightarrow\;
+(V(T_1),V(T_2),V(T_3))
+\;\longrightarrow\;
+V(T_j)=\int_0^{T_j}(as^2+bs+c)^2\,ds
+\;\longrightarrow\;
+(a,b,c)
+}
+$$
+
+Es decir: cada precio de call nos da una **varianza acumulada objetivo**. Después buscamos una única curva $\sigma(t)=at^2+bt+c$ cuyas integrales de varianza reproduzcan simultáneamente esos tres objetivos.
+
+Conviene separar dos preguntas:
+
+1. **Problema matemático:** ¿qué tres ecuaciones deben satisfacer $a,b,c$?
+2. **Robustez numérica:** una vez planteadas, ¿cómo comprobamos que el solver ha encontrado una solución fiable y admisible?
+
+La monotonía de la call respecto de $V(T)$, demostrada al final de 3.2, justifica que cada precio europeo determine una única varianza acumulada objetivo.
+'''
+                  t2 = t2[:pos] + intro + t2[pos:]
+                  changed.append('3.3-mapa')
+                  first33 = False
+              if '### 3. Resolver y seleccionar una volatilidad admisible' in t2:
+                  t2 = t2.replace('### 3. Resolver y seleccionar una volatilidad admisible', '### 3. Robustez numérica: resolver y seleccionar una volatilidad admisible', 1)
+                  if 'Hasta aquí ya está planteado el problema matemático.' not in t2:
+                      t2 = t2.replace('### 3. Robustez numérica: resolver y seleccionar una volatilidad admisible', '### 3. Robustez numérica: resolver y seleccionar una volatilidad admisible\n\nHasta aquí ya está planteado el problema matemático. Lo que sigue no cambia las ecuaciones: sirve para comprobar que la solución numérica no es un artefacto de un punto inicial o de una raíz no admisible.', 1)
+                  changed.append('3.3-robustez')
+              if t2 != t:
+                  set_text(c, t2)
+
+          # 4) 3.4: first show the pricing core; advanced variance reduction becomes a second layer.
+          in34 = False
+          first34 = True
+          for c in nb['cells']:
+              if c.get('cell_type') != 'markdown':
+                  continue
+              t = cell_text(c)
+              if '## Apartado 3.4 —' in t:
+                  in34 = True
+              if not in34:
+                  continue
+              t2 = t
+              if first34 and '## Apartado 3.4 —' in t2 and '### Mapa de la valoración' not in t2:
+                  pos = t2.find('\n', t2.find('## Apartado 3.4 —')) + 1
+                  intro = r'''
+### Mapa de la valoración
+
+Antes de entrar en técnicas de precisión numérica, el precio de la asiática se construye con esta cadena:
+
+$$
+\boxed{
+\sigma(t)
+\to V(t_i)
+\to \Delta V_i
+\to Z_i
+\to S_{t_i}
+\to \overline S
+\to (\overline S-K)^+
+\to \text{media de payoffs}
+\to \text{descuento}
+}
+$$
+
+Éste es el **núcleo del ejercicio**. Antitéticos, control geométrico y RQMC no cambian el producto ni su esperanza: se añaden después para obtener la misma valoración con menos ruido numérico.
+'''
+                  t2 = t2[:pos] + intro + t2[pos:]
+                  changed.append('3.4-mapa')
+                  first34 = False
+              if '### 5. Reducir el ruido sin cambiar el producto' in t2 and '### Segunda capa — Precisión numérica y auditoría' not in t2:
+                  t2 = t2.replace('### 5. Reducir el ruido sin cambiar el producto', '### Segunda capa — Precisión numérica y auditoría\n\nA partir de aquí el precio ya está conceptualmente definido. Las técnicas siguientes solo buscan reducir y medir el error de simulación.\n\n### 5. Reducir el ruido sin cambiar el producto', 1)
+                  changed.append('3.4-segunda-capa')
+              if t2 != t:
+                  set_text(c, t2)
+
+          # Safety checks: code cells and their outputs must remain byte-for-byte identical as JSON objects.
+          after_code = [json.dumps(c, sort_keys=True, ensure_ascii=False) for c in nb['cells'] if c.get('cell_type') == 'code']
+          assert before_code == after_code, 'A code cell or output changed; aborting.'
+          assert changed, 'No pedagogical changes were applied.'
+
+          all_md = '\n'.join(cell_text(c) for c in nb['cells'] if c.get('cell_type') == 'markdown')
+          assert 'X_t' in all_md
+          assert '### Mapa del ejercicio 3' in all_md
+          assert '### Antes de calcular: qué estamos calibrando' in all_md
+          assert '### Segunda capa — Precisión numérica y auditoría' in all_md
+          assert 'L_t' not in '\n'.join(cell_text(c) for c in nb['cells'] if c.get('cell_type') == 'markdown' and 'Apartado 3.1' in cell_text(c)), 'Old L_t remains in main 3.1 cell.'
+
+          path.write_text(json.dumps(nb, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+          print('Applied:', ', '.join(changed))
+          print('Code cells preserved:', len(before_code))
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm .github/workflows/tmp-update-ejercicio3-pedagogia.yml
+          git add entrega-2-procesos-estocasticos/3-volatilidad-determinista-asiatica/ejercicio3_volatilidad_determinista_asiatica.ipynb .github/workflows/tmp-update-ejercicio3-pedagogia.yml
+          git commit -m 'docs: mejorar granularidad pedagógica del ejercicio 3 [skip ci]'
+          git push origin HEAD:docs/ejercicio-3-friendly-pedagogia
