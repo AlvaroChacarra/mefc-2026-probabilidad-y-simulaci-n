@@ -1,170 +1,158 @@
-# Auditoría independiente — Procesos estocásticos
+# Auditoría final · Entrega de tres notebooks
 
-## Veredicto
+**VERDE · PASS · confianza alta.** Revisión del 13/09/2026.
 
-**APROBADO — confianza alta.**
+Base: `main` en `0e40912b08ede6d10c65b44a32d4f8a96ac6f00a`.
 
-**Modo:** exhaustivo, con reejecución limpia y contrastes independientes.
+Si el alumno entrega únicamente estos tres Jupyter notebooks, el profesor dispone
+de toda la resolución exigida por el enunciado, incluyendo teoría, cálculos,
+simulaciones, resultados, gráficas, interpretación y justificación, sin necesitar
+ningún Excel u otro entregable complementario.
 
-**Cumplimiento del enunciado:** completo.
+## Fuente y autorización de formato
 
-Los tres ejercicios están resueltos y son reproducibles. No quedan errores
-materiales ni hallazgos bloqueantes. La única limitación sustantiva es la
-convención del estado `Caa-C`, autorizada expresamente por la profesora y
-documentada en todos los entregables.
+Se leyó el PDF original completo y se inspeccionó su página 2. SHA-256:
+`ca6f567bad241a4de3a5eefb764e9bf4bdf3313753d7cbfa18bb89e7e537f3f5`.
+El original solicita memoria explicativa y hojas de cálculo; 2.c.3 dice
+«Simular en Excel la trayectoria de ese proceso». El alumno confirmó durante esta
+sesión que la profesora permite Jupyter para la simulación. El veredicto incorpora
+esa autorización; no presupone que el PDF original admita por sí mismo el cambio.
 
-## Integridad de fuentes
+## Cobertura apartado por apartado
 
-| Fichero | SHA-256 |
-|---|---|
-| `MEFC_2026_examen_procesos.pdf` | `ca6f567bad241a4de3a5eefb764e9bf4bdf3313753d7cbfa18bb89e7e537f3f5` |
-| `matriz-ratings.xlsx` | `eba5c1016fe9a17c25226a83cfe99e303a8801e6d1f21b814a44903b608289e3` |
+Los IDs corresponden a las celdas guardadas dentro de cada notebook.
 
-Los binarios originales se mantienen fuera del historial porque el repositorio
-es público. Se usaron copias exactas para la reejecución final.
-
-## Convención de la matriz 9×8
-
-El PDF trabaja con ocho estados, pero el Excel trae nueve filas de origen y ocho
-columnas de destino. La profesora aclaró que las transiciones desde `Caa-C`
-quedaron desdobladas en `Caa` y `Ca-C`, sin pesos que permitan agregarlas, y
-autorizó eliminar una fila.
-
-La resolución:
-
-1. elimina `Ca-C`;
-2. conserva `Caa`;
-3. renombra la fila conservada como `Caa-C`;
-4. no promedia ni inventa ponderaciones.
-
-Esta decisión produce una matriz 8×8 coherente con la distribución inicial del
-enunciado.
-
-## Cobertura
-
-| Apartado | Evidencia | Estado |
+| Apartado del enunciado | Notebook / celdas que responden | Estado |
 |---|---|---|
-| 1.a | PD acumulada y primer default 1–25Y; tres regímenes gráficos | PASS |
-| 1.b | Cohorte de 5.002 compañías bajo la convención autorizada | PASS |
-| 1.c | P²⁵ analítica y simulación por rating inicial | PASS |
-| 2.a | Itô del cociente, covariación y martingala verdadera | PASS |
-| 2.b | Integral cerrada, isometría y convergencia discreta | PASS |
-| 2.c.1 | Dos demostraciones de martingala | PASS |
-| 2.c.2 | Ley exacta, soporte, esperanza y varianza | PASS |
-| 2.c.3 | Trayectorias, 5.000 réplicas y Excel formula-driven | PASS |
-| 3.1 | Verificación de la solución de la SDE | PASS |
-| 3.2 | Fórmula europea mediante varianza acumulada | PASS |
-| 3.3 | Inversión, búsqueda multistart, selección y repricing | PASS |
-| 3.4 | Simulación exacta, descuento y doble estimador | PASS |
+| 1.a · PD acumulada por rating, años 1–25 | Ejercicio 1: `bfe59764; 6ad27b3f` | PASS |
+| 1.a · Primer default por año, gráfica y explicación por rating | Ejercicio 1: `6ad27b3f; 0b705372; 659c831b` | PASS |
+| 1.b · Proporción anual de default de la cohorte de 5.002 compañías | Ejercicio 1: `48762b4d; 5ce5ccfc; 5b32b261` | PASS |
+| 1.c · Distribución de todos los ratings a 25 años según estado inicial | Ejercicio 1: `c1fc6653; bdf0a249` | PASS |
+| 1.c · Compañía aleatoria de la cohorte y comprobación por simulación | Ejercicio 1: `88a7ad97; b74c1768` | PASS |
+| Dato original y convención de ocho estados | Ejercicio 1: `d570be1e; 5727c866; 0e2dbc24` | PASS |
+| 2.a · Deriva del cociente y martingala verdadera | Ejercicio 2: `be851f40; bc48b4fc` | PASS |
+| 2.b · Integral de Itô resuelta y comprobada | Ejercicio 2: `38b17728; 8f33c00a; 279a5458` | PASS |
+| 2.c.1 · Dos métodos y demostración de martingala verdadera | Ejercicio 2: `26362b59` | PASS |
+| 2.c.2 · Ley, esperanza, varianza y soporte | Ejercicio 2: `d443c12b` | PASS |
+| 2.c.3 · Algoritmo y trayectoria simulada | Ejercicio 2: `simulacion-algoritmo; simulacion-trayectoria` | PASS |
+| 2.c.3 · Verificación empírica en t=1: momentos y distribución | Ejercicio 2: `simulacion-momentos; simulacion-ley` | PASS |
+| Comprobación adicional · Esperanza condicional | Ejercicio 2: `simulacion-condicional-teoria; simulacion-condicional` | PASS |
+| 3.1 · Verificar SDE y condición inicial | Ejercicio 3: `b5e82c91` | PASS |
+| 3.2 · Derivar precio analítico de la call | Ejercicio 3: `357f8281` | PASS |
+| 3.3 · Calibrar a, b, c y reproducir las tres cotizaciones | Ejercicio 3: `09ef3b8a; 0910f481; a57e850c` | PASS |
+| 3.4 · Simular fijaciones conjuntas, payoff y pago a 2 años | Ejercicio 3: `18fb481d; bca49e0d` | PASS |
+| 3.4 · Resultado e incertidumbre; contraste independiente | Ejercicio 3: `761e3779; a0e09722; 53099190` | PASS |
 
-## Controles cuantitativos
+## Ejecución limpia y autosuficiencia
 
-### Ejercicio 1
+Cada notebook se copió, sin outputs ni contadores, a una carpeta temporal distinta
+que contenía únicamente ese `.ipynb`. Se ejecutaron en orden 1, 2, 3, cada uno en
+un proceso nuevo con kernel real `ipykernel.inprocess.InProcessKernel`. Se recogieron
+sus mensajes estándar de ejecución y sus contadores reales. TCP e IPC no están
+permitidos en este entorno; el kernel en proceso evita necesitar esos transportes,
+sin modificar el código de las celdas ni sustituir las gráficas por archivos externos.
 
-- Las nueve filas originales suman uno, con error máximo `2,22e-16`.
-- Todos los elementos están en `[0,1]` y `Default` es absorbente.
-- La matriz operativa conserva exactamente `Caa`, elimina `Ca-C` y la etiqueta
-  como `Caa-C`.
-- Las PD acumuladas son monótonas; los primeros defaults son no negativos y su
-  suma 1–25Y coincide con la PD 25Y.
-- Años modales por rating: `[25, 24, 11, 8, 5, 2, 1]`.
-- Cohorte: default exacto 1Y `2,2614%`; PD acumulada 25Y `54,1342%`.
-- Simulación principal: error máximo `0,001486`; máximo `|z|=2,41`.
-- Contraste separado por evolución multinomial de dos millones de compañías por
-  rating: error máximo `0,000453`; máximo `|z|=3,05`.
+| Notebook | Celdas de código | Contadores | Figuras embebidas | Resultado |
+|---|---:|---|---:|---|
+| Ejercicio 1 | 11 | 1–11 | 3 | PASS |
+| Ejercicio 2 | 9 | 1–9 | 5 | PASS |
+| Ejercicio 3 | 9 | 1–9 | 2 | PASS |
 
-### Ejercicio 2
+- Ningún error de ejecución; estructura `nbformat` válida.
+- Todos los contadores consecutivos. No se fabricaron los contadores de ejecución.
+- Cada carpeta siguió conteniendo solo su notebook al finalizar.
+- Cero lecturas de Excel, outputs, HTML/PDF o PNG; cero escrituras de ficheros auxiliares.
+- Revisión de las explicaciones, hipótesis y cobertura por notebook; gráficas inspeccionadas.
+- Las tablas y las figuras necesarias están guardadas dentro de los `.ipynb`.
 
-- La condición correcta del cociente incluye
-  `d⟨W¹,W²⟩ₜ=ρdt`; omitirla cambia el drift.
-- La integral satisface `Iₜ=Wₜ³/3-tWₜ` y
-  `Var(Iₜ)=2t³/3`.
-- El notebook, con su propia muestra, obtiene para `M₁` media `-0,000153`,
-  varianza `0,221344` y contraste KS `p=0,9292`.
-- La regresión condicional de `M₁` sobre `M₀.₅` da intercepto `-0,00056` y
-  pendiente `1,00149`.
-- Contraste independiente con dos millones de normales: media `0,000286`,
-  varianza `0,223597`, error estándar `0,000334` y mínimo superior a `-1/3`.
-- Una suma de Itô independiente con 20.000 caminos y 400 pasos presenta RMSE
-  `0,0497` frente a la fórmula cerrada, magnitud compatible con esa malla.
+## Conservación del ejercicio 1
 
-### Excel del ejercicio 2.c
+La única adaptación del dato es su incorporación al notebook. Se compararon las
+72 probabilidades originales bit a bit contra Hoja1/C3:J11 del archivo cuyo SHA-256
+es `eba5c1016fe9a17c25226a83cfe99e303a8801e6d1f21b814a44903b608289e3`.
+No se cambia ningún valor, normalización ni redondeo. Se conserva la matriz 8×8
+con Caa como Caa-C y Ca-C descartada, así como todas las explicaciones y cálculos.
 
-El libro `ejercicio2_simulacion_Mt.xlsx` contiene `Resumen`, `Trayectoria` y
-`Replica_t1`. Usa incrementos exactos
-`ΔAⱼ=√(Δqⱼ)Zⱼ`, con `q(t)=t³/3`, semillas fijas y normales visibles.
+Se compararon las tablas y salidas numéricas guardadas contra la base de main:
+**igualdad de toda la evidencia numérica del ejercicio 1**, salvo los mensajes
+que describen la procedencia del dato. También se verificó igualdad de todas las
+tablas y salidas numéricas del ejercicio 3.
 
-| Control | Resultado |
+## Simulación 2.c: sustitución completa del Excel
+
+- 2.c.1 conserva su derivación y las dos demostraciones de martingala verdadera.
+- 2.c.2 conserva el desarrollo analítico de la ley, momentos, soporte y CDF.
+- 2.c.3 genera una trayectoria exacta en 101 fechas, muestra sus ocho primeros
+  pasos y dibuja M junto a su cota inferior.
+- Se conservan los 400.000 pares de la antigua comprobación condicional (semilla
+  20260206), y su muestra terminal se reutiliza para todos los contrastes de la ley.
+  Desaparecen las 500.000 marginales independientes, la lectura de las 5.000
+  réplicas del Excel y el ensemble redundante de 100.000 trayectorias.
+- Los prefijos de la misma muestra permiten ver convergencia sin nuevas réplicas.
+- Se mantienen cuantiles y CDF; el histograma se normaliza con toda la muestra,
+  aunque se limite la vista al percentil 99,5 %.
+- Regresión con errores robustos HC1 y diagnóstico por quintiles; se explica por
+  qué una media constante o una regresión no prueban por sí solas una martingala.
+
+| Contraste de M₁ | Resultado |
 |---|---:|
-| Réplicas | 5.000 |
-| Media de M₁ | 0,008261710 |
-| Varianza muestral | 0,224583814 |
-| Error estándar | 0,006701997 |
-| IC 95% | [-0,004874204; 0,021397624] |
-| Sesgo estandarizado | 1,2327 SE |
-| Error absoluto de varianza | 0,002361592 |
-| Mínimo | -0,333333301 |
-| Holgura sobre la cota | 3,26e-08 |
+| Media teórica | 0 |
+| Media simulada | -0,000607552 |
+| Varianza teórica | 0,222222222 |
+| Varianza simulada | 0,222352075 |
+| IC 95 % de la media | [-0,002069; 0,000854] |
+| Distancia del mínimo a -1/3 | 9,359e-12 |
+| KS, valor p | 0,2666 |
+| Intercepto / pendiente condicional | -0,000556 / 1,001494 |
+| Máximo desvío por quintil | 1,99 SE |
 
-No aparecen `#REF!`, `#DIV/0!`, `#VALUE!`, `#NAME?` ni `#N/A`. Las tres hojas
-se renderizaron e inspeccionaron; el histograma incluye las 5.000 observaciones.
+El tercer IC puntual por quintil queda ligeramente fuera de cero; se declara en
+el notebook. Los intervalos son puntuales, no simultáneos; no se interpreta su
+cobertura como una demostración del proceso.
 
-### Ejercicio 3
+### Evidencia antes alojada en los Excel
 
-- Varianzas acumuladas implícitas: `0,0521320003`, `0,0899877821` y
-  `0,3292216020`.
-- Volatilidades efectivas: `22,8324%`, `26,8310%` y `40,5723%`.
-- Se encuentran cuatro raíces reales; solo una es no negativa en `[0,2]`.
-- Error máximo de repricing europeo: `2,13e-14`.
-- Precio principal: `13,621805`, IC 95% por 32 scrambles Sobol
-  `[13,621644; 13,621966]`.
-- PRNG del notebook: `13,622091`, diferencia estandarizada `+0,27`.
-- Contraste independiente con 100.000 pares piloto y 500.000 pares de
-  valoración, antitéticos y control geométrico: `13,622332`, error estándar
-  `0,001489`, IC 95% `[13,619414; 13,625250]`; diferencia `0,35 SE` frente al
-  principal.
-- La raíz con cruce por cero daría `13,740158` (`+0,869%`) y se rechaza por no
-  ser una volatilidad no negativa.
+| Evidencia anterior | Ubicación vigente | Estado |
+|---|---|---|
+| E1: matriz, PD 1–25, primeros defaults, cohorte, P²⁵ y simulación | Notebook 1, tablas completas | PASS |
+| E2: hoja Trayectoria | Notebook 2, algoritmo, tabla de pasos y figura | PASS |
+| E2: Replica_t1 / Resumen | Notebook 2, código que genera réplicas y contrasta momentos/CDF | PASS |
+| E3: cotizaciones, parámetros, fijaciones y valoración | Notebook 3, cálculo y resultados íntegros | PASS |
 
-## Controles de entrega
+No se exige adjuntar las antiguas realizaciones aleatorias: la implementación
+reproducible y todas las verificaciones necesarias se generan dentro del notebook.
 
-- Se ejecutaron las 28 celdas de código en orden, en namespaces limpios.
-- Todos los contadores son consecutivos y no existe ningún output de error.
-- Los notebooks contienen 9 figuras embebidas y sus copias PNG deterministas.
-- Los tres HTML contienen MathML nativo, tablas y gráficos embebidos.
-- Los HTML no hacen peticiones de red y pasan el validador de iPhone con
-  **0 errores y 0 avisos**.
-- La memoria tiene 22 páginas A4, índice y marcadores; sus 22 páginas se
-  renderizaron e inspeccionaron sin recortes, solapes ni páginas en blanco.
-- No había un navegador headless disponible para medir dinámicamente los tres
-  viewports HTML; esta limitación visual no afecta a la validación estática ni
-  a la autosuficiencia comprobada.
+## Verificación numérica con implementaciones independientes
 
-## Correcciones realizadas durante la auditoría
+Los contrastes siguientes se calcularon con código distinto del de la solución;
+no son una revisión por otro agente.
 
-1. Se explicitó que un máximo en el año 25 es solo el máximo observado dentro
-   de la ventana, no un máximo global.
-2. El mapa de P²⁵ muestra error estandarizado y su etiqueta coincide con el
-   dato representado.
-3. Se repuso el signo `+` omitido en la presentación de la dinámica del
-   cociente.
-4. El intervalo de la sensibilidad del ejercicio 3 se presenta con límites
-   inferior y superior, no con un `±` ambiguo.
-5. Se preservaron las correcciones previas sobre la densidad singular de `M₁`
-   y el descuento de la call asiática.
-6. El histograma del Excel se amplió para no truncar 13 observaciones de cola.
+1. **Ratings:** recurrencia de supervivencia con la submatriz transitoria,
+   sin usar potencias de la matriz completa. PD 1Y = 0,022614473918421304;
+   PD 25Y = 0,5413420478326217; 2.707,792923 compañías esperadas.
+   Años modales: [25, 24, 11, 8, 5, 2, 1]. Coinciden con la resolución.
+2. **Itô:** integración numérica de los polinomios contra la densidad normal:
+   E[M₁] = 1,04e-17, Var(M₁) = 0,22222222222222227 y
+   Var(I₁) = 0,6666666666666667. Verificación algebraica de las derivas y
+   revisión de integrabilidad y de las dos demostraciones de martingala.
+3. **Calibración:** integración numérica de σ², integración directa del payoff
+   lognormal y optimizador `least_squares`, sin reutilizar la fórmula de varianza
+   polinómica ni la función de precio del notebook. Coeficientes:
+   [0,04995871687243516; 0,2000947516196639; 0,09988128043410571].
+   Error máximo de precio: 7,11e-15.
+4. **Asiática:** normales conjuntas mediante Cholesky, semilla independiente
+   9132026, 500.000 parejas y control geométrico de coeficiente fijo uno;
+   su esperanza se calcula por cuadratura. Precio 13,6233540831, SE 0,0016874013;
+   diferencia de 0,92 SE frente al precio principal 13,621805.
 
-## Supuestos y riesgo residual
+El notebook 3 conserva su precio principal 13,621805 e IC RQMC
+[13,621644; 13,621966]. No se modificaron payoff, fijaciones, calibración, semillas
+de valoración, selección de curva ni método numérico. El histograma reutiliza
+parejas del contraste ya calculado, en vez de generar otra muestra para dibujarlo.
 
-1. **Bucket Caa-C.** Los resultados del ejercicio 1 son condicionales a la fila
-   `Caa` conservada, por autorización docente.
-2. **Precios redondeados.** Las calls se facilitan con dos decimales; los
-   últimos dígitos de `a`, `b` y `c` son precisión numérica, no económica.
-3. **Riesgo de modelo.** El IC Monte Carlo mide error de simulación, no la
-   incertidumbre de especificación de `σ(t)`.
+## Conclusión de aceptación
 
-## Hallazgos materiales
-
-**Ninguno.** La entrega es coherente, trazable y suficientemente precisa para
-el enunciado. El riesgo residual relevante está declarado y no se oculta bajo
-una agregación inventada.
+**PASS en los diez controles solicitados.** Los tres notebooks son la única
+entrega vigente. El material de `output/` es histórico y no se utiliza como input.
+Los riesgos de modelización ya existentes siguen declarados: convención Caa-C,
+cotizaciones redondeadas y selección de la curva de volatilidad no negativa.

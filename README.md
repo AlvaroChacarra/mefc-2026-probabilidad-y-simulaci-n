@@ -1,21 +1,20 @@
 # MEFC 2026 · Fundamentos Matemáticos
 
-Dos entregas, cada una con sus enunciados, ejercicios y materiales de revisión.
-
 | Entrega | Contenido | Acceso |
 |---|---|---|
-| **1 · Probabilidad y Simulación** | Monte Carlo e importance sampling; transformaciones normales; capital económico con cópulas | [Abrir entrega 1](entrega-1-probabilidad-y-simulacion/README.md) |
-| **2 · Procesos Estocásticos** | Ratings y cadenas de Markov; Itô y martingalas; volatilidad determinista y opción asiática | [Abrir entrega 2](entrega-2-procesos-estocasticos/README.md) |
+| 1 · Probabilidad y Simulación | Monte Carlo, transformaciones normales y cópulas | [Entrega 1](entrega-1-probabilidad-y-simulacion/README.md) |
+| 2 · Procesos Estocásticos | Ratings, Itô, martingalas y opción asiática | [Entrega 2](entrega-2-procesos-estocasticos/README.md) |
 
-## Entregables de Procesos Estocásticos
+## Entregables definitivos de Procesos Estocásticos
 
-- [Documento HTML](entrega-2-procesos-estocasticos/output/main.html): los tres ejercicios, lectura vertical y offline.
-- [PDF para entregar](entrega-2-procesos-estocasticos/output/procesos_estocasticos.pdf): el mismo contenido.
-- [Excel de resultados](entrega-2-procesos-estocasticos/output/procesos_estocasticos.xlsx).
-- [Todos los outputs](entrega-2-procesos-estocasticos/output/README.md): memorias, reportes por ejercicio, gráficos y simulación Excel.
+La segunda entrega consiste exclusivamente en estos tres notebooks autocontenidos:
 
-## Ejecutar y regenerar
+- [ejercicio1_cadenas_markov_ratings.ipynb](entrega-2-procesos-estocasticos/1-cadenas-markov-ratings/ejercicio1_cadenas_markov_ratings.ipynb)
+- [ejercicio2_ito_martingalas.ipynb](entrega-2-procesos-estocasticos/2-ito-martingalas/ejercicio2_ito_martingalas.ipynb)
+- [ejercicio3_volatilidad_determinista_asiatica.ipynb](entrega-2-procesos-estocasticos/3-volatilidad-determinista-asiatica/ejercicio3_volatilidad_determinista_asiatica.ipynb)
 
-Desde la raíz del repositorio, instala `requirements.txt` en un entorno virtual y abre los notebooks con Jupyter. Ejecuta cada notebook desde su propia carpeta para resolver las rutas relativas a datos y outputs. Las semillas están fijadas; los HTML ya incluyen los resultados y se pueden leer sin instalar nada.
+Cada notebook se ejecuta por separado desde un kernel limpio sin archivos auxiliares.
+Los cálculos requieren NumPy, pandas, Matplotlib y SciPy, además de Jupyter/IPython.
+Los Excel, HTML y PDF de `entrega-2-procesos-estocasticos/output/` son históricos.
 
-`tools/` contiene las herramientas compartidas. Las instrucciones de cada entrega indican los datos necesarios y cómo regenerar sus reportes.
+Las instrucciones y dependencias de la primera entrega permanecen en su carpeta.

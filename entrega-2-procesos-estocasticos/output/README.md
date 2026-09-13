@@ -1,3 +1,7 @@
+> **Material histórico: no entregar.** Desde el 13/09/2026 la entrega vigente consta
+> únicamente de los tres notebooks indicados en [el índice actual](../README.md).
+> Estos archivos conservan una versión anterior y no se regeneran con la entrega actual.
+
 # Outputs · Entrega 2
 
 Los **tres notebooks son la fuente de contenido**. Cada reporte HTML reproduce
