@@ -46,9 +46,20 @@ y la presentación de las gráficas; se añade la lectura del Excel de 2.c sin
 generar otra muestra. Los paneles se apilan y la cohorte deja de utilizar doble
 eje. Los reportes se verifican también a anchuras de móvil.
 
-Los PDF [procesos_estocasticos.pdf](procesos_estocasticos.pdf) (16 páginas) y
-[memoria_detallada.pdf](memoria_detallada.pdf) (22 páginas) conservan la edición
-resumida previa. No son una exportación completa de los notebooks de esta
-edición, ni se han regenerado en esta revisión de notebooks y HTML.
+Los PDF [procesos_estocasticos.pdf](procesos_estocasticos.pdf) y
+[memoria_detallada.pdf](memoria_detallada.pdf) contienen ahora la **misma memoria
+completa**, exportada desde `main.html`. El segundo nombre es un alias compatible
+con enlaces anteriores. Sustituyen las ediciones resumidas de 16 y 22 páginas;
+no contienen una segunda fuente de explicación mantenida a mano.
+
+```bash
+npx --prefix tools playwright install chromium
+python tools/build_notebooks_procesos.py --pdf
+```
+
+La edición de 3.2–3.4 solo modifica Markdown y su orden: las nueve celdas de
+cálculo, sus salidas numéricas y 3.1 permanecen idénticos al `main` de partida.
+El PDF oculta código, mantiene resultados y figuras y pagina en A4 con la misma
+familia tipográfica y colores del HTML.
 
 Para ejecutar los notebooks, consulta [Reproducir](../README.md#reproducir).
